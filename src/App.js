@@ -4,6 +4,7 @@ import { PrivateRoute } from "./components";
 import { Home, LoginPage, SignupPage } from "./pages";
 import Routes from "./Routes";
 
+// comment just to deploy
 const App = () => (
   <div>
     <Switch>
