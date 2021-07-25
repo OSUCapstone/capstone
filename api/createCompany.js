@@ -36,7 +36,6 @@ module.exports = async (req, res) => {
 
     // If company is taken, return 400 status code
     if (company.length) {
-      console.log(`FOUR`);
       return res.status(409).send();
 
     // If not, create new account in company table
