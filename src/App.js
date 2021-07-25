@@ -2,6 +2,7 @@ import { Redirect, Route, Switch } from "react-router";
 import { PrivateRoute } from "./components";
 
 import { Home, LoginPage, SignupPage } from "./pages";
+import CompanyPage from "./pages/CompanyPage";
 import Routes from "./Routes";
 
 // comment just to deploy
@@ -18,6 +19,10 @@ const App = () => (
 
       <PrivateRoute path={Routes.HOME_PAGE}>
         <Home />
+      </PrivateRoute>
+
+      <PrivateRoute path={Routes.COMPANY_PAGE}>
+        <CompanyPage />
       </PrivateRoute>
 
       <Route component={() => <Redirect to={Routes.LOGIN_PAGE} />} />
