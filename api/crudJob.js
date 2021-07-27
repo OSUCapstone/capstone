@@ -24,10 +24,29 @@ const query = async (query) => {
   }
 };
 
-async function deleteJob(jobId) {
+async function updateJob(vals) {
   try {
     await query(
-      SQL`DELETE FROM job WHERE job_id = ${jobId};`
+      SQL`UPDATE job 
+      SET 
+      company_id = ${vals.companyId}, 
+      job_title = ${vals.jobTitle}, 
+      availability = ${vals.availability}, 
+      application_status = ${vals.applicationStatus}, 
+      type = ${vals.type}
+      WHERE job_id = ${vals.jobId};`
+    );
+    return true;
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+}
+
+async function deleteJob(vals) {
+  try {
+    await query(
+      SQL`DELETE FROM job WHERE job_id = ${vals.jobId};`
     );
     return true;
   } catch (err) {
@@ -38,12 +57,14 @@ async function deleteJob(jobId) {
 
 module.exports = async (req, res) => {
   try {
-    if (req.body.type == 'delete') {
-      if (await deleteJob(req.body.jobId)) {
+    if (req.body.crud == 'delete') {
+      if (await deleteJob(req.body)) {
         return res.status(200).send();
       }
-    } else if (req.body.type == 'update') {
-      // TODO: Implement update function
+    } else if (req.body.crud == 'update') {
+      if (await updateJob(req.body)) {
+        return res.status(200).send();
+      }
     }
 
     // None of the available routes executed

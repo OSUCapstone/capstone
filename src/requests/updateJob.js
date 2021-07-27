@@ -1,12 +1,17 @@
 import axios from "axios";
 
-const deleteJob = async (jobId) => {
+const updateJob = async (jobId, companyId, jobTitle, availability, applicationStatus, type) => {
   try {
     return await axios.post(
       "/api/crudJob",
       {
-        crud: 'delete',
+        crud: 'update',
         jobId,
+        companyId, 
+        jobTitle,
+        availability,
+        applicationStatus,
+        type,       
       },
       {
         headers: {
@@ -19,4 +24,4 @@ const deleteJob = async (jobId) => {
   }
 };
 
-export default deleteJob;
+export default updateJob;
