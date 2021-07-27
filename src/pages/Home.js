@@ -22,6 +22,14 @@ const Home = withRouter(({ match, history, location }) => {
     }
   };
 
+  const gotoJob = async () => {
+    try {
+      history.push(Routes.JOB_PAGE)
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <div className="w-full h-screen flex flex-col justify-center items-center">
       <div className="absolute top-5 left-5">
@@ -32,6 +40,7 @@ const Home = withRouter(({ match, history, location }) => {
       <div className="my-2">
         <Button onClick={handleLogout}>Logout</Button>
         <Button onClick={gotoCompany}>Go to Company Page</Button>
+        <Button onClick={gotoJob}>Go to Job Page</Button>
       </div>
     </div>
   );
