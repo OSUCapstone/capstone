@@ -24,15 +24,50 @@ const query = async (query) => {
   }
 };
 
+async function createJob(vals) {
+  try {
+    await query(
+      SQL`INSERT job
+      SET
+      job_id = ${vals.jobId}
+      company_id = ${vals.companyId},
+      job_title = ${vals.jobTitle},
+      user_id = ${vals.userID},
+      availability = ${vals.availability},
+      application_status = ${vals.applicationStatus},
+      type = ${vals.type};`
+    );
+    return true;
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+}
+
+async function readJob(vals) {
+  try {
+    await query(
+      SQL`SELECT jobId, companyId, jobTitle, userID,
+      availability, applicationStatus, type
+      FROM job
+      WHERE job_id = ${vals.jobId};`
+    );
+    return true;
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+}
+
 async function updateJob(vals) {
   try {
     await query(
-      SQL`UPDATE job 
-      SET 
-      company_id = ${vals.companyId}, 
-      job_title = ${vals.jobTitle}, 
-      availability = ${vals.availability}, 
-      application_status = ${vals.applicationStatus}, 
+      SQL`UPDATE job
+      SET
+      company_id = ${vals.companyId},
+      job_title = ${vals.jobTitle},
+      availability = ${vals.availability},
+      application_status = ${vals.applicationStatus},
       type = ${vals.type}
       WHERE job_id = ${vals.jobId};`
     );
