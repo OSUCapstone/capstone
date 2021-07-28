@@ -31,7 +31,7 @@ const SignupPage = withRouter(({ match, history, location }) => {
     try {
       let res = await login(username, password);
       localStorage.setItem("access_token", res.data);
-      history.push(Routes.HOME_PAGE);
+      history.push(Routes.JOBS_PAGE);
     } catch (err) {
       console.log(err);
     }

@@ -27,15 +27,15 @@ module.exports = async (req, res) => {
   try {
     // Get user's id
     let result = await query(
-      `SELECT user_id FROM token WHERE token = '${req.body.token}';`
+      SQL`SELECT user_id FROM token WHERE token = '${req.headers.authorization}';`
     );
 
     // If token is valid
     if (result[0]) {
       return res.status(200).send(result[0].user_id);
-      
-    // If not, return unauthorized error
-    } else {          
+
+      // If not, return unauthorized error
+    } else {
       return res.status(401).send();
     }
   } catch (err) {
@@ -43,4 +43,3 @@ module.exports = async (req, res) => {
     return res.status(503).send();
   }
 };
-  

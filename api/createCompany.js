@@ -38,8 +38,8 @@ module.exports = async (req, res) => {
     if (company.length) {
       return res.status(409).send();
 
-    // If not, create new account in company table
-    } else {          
+      // If not, create new account in company table
+    } else {
       await query(
         SQL`INSERT INTO company (company_id, company_name, user_id) VALUES (${newCompanyId}, ${req.body.company}, ${req.body.userId});`
       );
@@ -50,4 +50,3 @@ module.exports = async (req, res) => {
     return res.status(503).send();
   }
 };
-  
