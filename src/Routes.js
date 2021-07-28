@@ -10,13 +10,15 @@ const Routes = {
   LOGIN_PAGE: `${AUTH_BASE_ROUTE}/login`,
   SIGNUP_PAGE: `${AUTH_BASE_ROUTE}/register`,
 
-  COMPANY_PAGE: `${APP_BASE_ROUTE}/company`,
-
   JOBS_PAGE: `${JOBS_BASE_ROUTE}/all`,
   JOB_PAGE: `${JOBS_BASE_ROUTE}/:id`,
 
   SKILLS_PAGE: `${APP_BASE_ROUTE}/skills/all`,
+  SKILL_PAGE: `${APP_BASE_ROUTE}/skills/:id`,
+
   COMPANIES_PAGE: `${APP_BASE_ROUTE}/companies/all`,
+  COMPANY_PAGE: `${APP_BASE_ROUTE}/companies/:id`,
+
   CONTACTS_PAGE: `${APP_BASE_ROUTE}/contacts/all`,
 };
 

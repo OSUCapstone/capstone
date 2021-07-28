@@ -1,8 +1,7 @@
 import { Redirect, Route, Switch } from "react-router";
 import { NavBar, PrivateRoute } from "./components";
 
-import { JobPage, JobsPage, LoginPage, SignupPage } from "./pages";
-import CompanyPage from "./pages/CompanyPage";
+import { JobPage, JobsPage, LoginPage, SignupPage, CompanyPage } from "./pages";
 import Routes from "./Routes";
 
 const App = () => (
@@ -24,28 +23,32 @@ const App = () => (
           </div>
 
           <Switch>
-            <PrivateRoute path={Routes.COMPANY_PAGE}>
-              <CompanyPage />
-            </PrivateRoute>
-
+            {/* Jobs */}
             <PrivateRoute exact path={Routes.JOBS_PAGE}>
               <JobsPage />
             </PrivateRoute>
 
-            <PrivateRoute exact path={Routes.JOB_PAGE}>
+            <PrivateRoute path={Routes.JOB_PAGE}>
               <JobPage />
             </PrivateRoute>
 
-            <PrivateRoute path={Routes.SKILLS_PAGE}>
+            {/* Skills */}
+            <PrivateRoute exact path={Routes.SKILLS_PAGE}>
+              <JobsPage />
+            </PrivateRoute>
+
+            <PrivateRoute path={Routes.SKILL_PAGE}>
+              <JobPage />
+            </PrivateRoute>
+
+            {/* Companies */}
+            <PrivateRoute path={Routes.COMPANY_PAGE}>
               <CompanyPage />
             </PrivateRoute>
 
-            <PrivateRoute path={Routes.COMPANIES_PAGE}>
-              <CompanyPage />
-            </PrivateRoute>
-
-            <PrivateRoute path={Routes.CONTACTS_PAGE}>
-              <CompanyPage />
+            {/* Contacts */}
+            <PrivateRoute exact path={Routes.CONTACTS_PAGE}>
+              <JobsPage />
             </PrivateRoute>
           </Switch>
         </div>

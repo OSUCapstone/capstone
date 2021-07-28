@@ -19,9 +19,15 @@ const LoginPage = withRouter(({ match, history, location }) => {
     try {
       let res = await login(username, password);
       localStorage.setItem("access_token", res.data);
-      history.push(Routes.HOME_PAGE);
+      history.push(Routes.JOBS_PAGE);
     } catch (err) {
       console.log(err);
+    }
+  };
+
+  const onKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleLogin();
     }
   };
 
@@ -47,6 +53,7 @@ const LoginPage = withRouter(({ match, history, location }) => {
           setValue={setPassword}
           placeholder="Enter your password..."
           type="password"
+          onKeyDown={onKeyDown}
         />
       </div>
       <div className="my-2">

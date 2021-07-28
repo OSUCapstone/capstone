@@ -3,6 +3,7 @@ import { withRouter } from "react-router-dom";
 import { CgProfile } from "react-icons/cg";
 
 import Routes from "../Routes";
+import ProfileDropdown from "./ProfileDropdown";
 
 const links = [
   {
@@ -50,7 +51,7 @@ const NavBar = withRouter(({ location, history }) => {
           />
         ))}
       </div>
-      <CgProfile className="hover:text-gray-200 cursor-pointer mx-3 h-8 w-8 text-white" />
+      <ProfileDropdown />
     </div>
   );
 });
