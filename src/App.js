@@ -1,13 +1,12 @@
 import { Redirect, Route, Switch } from "react-router";
-import { PrivateRoute } from "./components";
+import { NavBar, PrivateRoute } from "./components";
 
-import { Home, LoginPage, SignupPage } from "./pages";
+import { JobPage, JobsPage, LoginPage, SignupPage } from "./pages";
 import CompanyPage from "./pages/CompanyPage";
 import Routes from "./Routes";
 
-// comment just to deploy
 const App = () => (
-  <div>
+  <div className="h-screen">
     <Switch>
       <Route path={Routes.LOGIN_PAGE}>
         <LoginPage />
@@ -17,12 +16,39 @@ const App = () => (
         <SignupPage />
       </Route>
 
-      <PrivateRoute path={Routes.HOME_PAGE}>
-        <Home />
-      </PrivateRoute>
+      {/* Authorized Pages all live inside Nav container */}
+      <PrivateRoute path={Routes.APP_BASE_ROUTE}>
+        <div className="flex flex-col w-full h-screen overflow-hidden">
+          <div className="w-full flex-none">
+            <NavBar />
+          </div>
 
-      <PrivateRoute path={Routes.COMPANY_PAGE}>
-        <CompanyPage />
+          <Switch>
+            <PrivateRoute path={Routes.COMPANY_PAGE}>
+              <CompanyPage />
+            </PrivateRoute>
+
+            <PrivateRoute exact path={Routes.JOBS_PAGE}>
+              <JobsPage />
+            </PrivateRoute>
+
+            <PrivateRoute exact path={Routes.JOB_PAGE}>
+              <JobPage />
+            </PrivateRoute>
+
+            <PrivateRoute path={Routes.SKILLS_PAGE}>
+              <CompanyPage />
+            </PrivateRoute>
+
+            <PrivateRoute path={Routes.COMPANIES_PAGE}>
+              <CompanyPage />
+            </PrivateRoute>
+
+            <PrivateRoute path={Routes.CONTACTS_PAGE}>
+              <CompanyPage />
+            </PrivateRoute>
+          </Switch>
+        </div>
       </PrivateRoute>
 
       <Route component={() => <Redirect to={Routes.LOGIN_PAGE} />} />
