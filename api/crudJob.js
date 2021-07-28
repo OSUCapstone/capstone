@@ -27,15 +27,9 @@ const query = async (query) => {
 async function createJob(vals) {
   try {
     await query(
-      SQL`INSERT job
-      SET
-      job_id = ${vals.jobId}
-      company_id = ${vals.companyId},
-      job_title = ${vals.jobTitle},
-      user_id = ${vals.userID},
-      availability = ${vals.availability},
-      application_status = ${vals.applicationStatus},
-      type = ${vals.type};`
+      SQL`
+      INSERT INTO job (job_id, company_id, user_id, job_title, availability, application_status, type)
+      VALUES (${vals.jobId}, ${vals.companyId}, ${vals.userID}, ${vals.jobTitle}, ${vals.availability}, ${vals.applicationStatus}, ${vals.type});`
     );
     return true;
   } catch (err) {
@@ -47,8 +41,8 @@ async function createJob(vals) {
 async function readJob(vals) {
   try {
     await query(
-      SQL`SELECT jobId, companyId, jobTitle, userID,
-      availability, applicationStatus, type
+      SQL`SELECT job_id, company_id, job_title, user_id,
+      availability, application_status, type
       FROM job
       WHERE job_id = ${vals.jobId};`
     );
@@ -98,6 +92,15 @@ module.exports = async (req, res) => {
       }
     } else if (req.body.crud == 'update') {
       if (await updateJob(req.body)) {
+        return res.status(200).send();
+      }
+    } else if (req.body.crud == 'read') {
+      if (await readJob(req.body)) {
+        //TODO: return values from database
+        return res.status(200).send();
+      }
+    } else if (req.body.crud == 'create') {
+      if (await createJob(req.body)) {
         return res.status(200).send();
       }
     }

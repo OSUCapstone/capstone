@@ -10,59 +10,59 @@ import { createJob, readJob, deleteJob, updateJob } from "../requests";
 import Routes from "../Routes";
 
 const JobPage = withRouter(({ match, history, location }) => {
-  const handleDeleteJob = async () => {
-    try {
-      await deleteJob('testId');
-      history.push(Routes.JOB_PAGE);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const handleUpdateJob = async () => {
-    try {
-      await updateJob('testId', '1', '3', '3', '3', '3');
-      history.push(Routes.JOB_PAGE);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const handleCreateJob = async () => {
-    try {
-      await createJob(jobId, companyId, jobTitle, userID, availability, applicationStatus, type);
-      history.push(Routes.JOB_PAGE);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const handleReadJob = async () => {
-    try {
-      await readJob(jobId, companyId, jobTitle, userID, availability, applicationStatus, type);
-      history.push(Routes.JOB_PAGE);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  return (
-    <div className="w-full h-screen flex flex-col justify-center items-center">
-      <div className="absolute top-5 left-5">
-        <Heading>Job Tracker</Heading>
-      </div>
-      <Heading>Job Page</Heading>
-      <div className="my-2">
-        <Button onClick={handleCreateJob}>Create Job</Button>
-      </div>
-      <div className="my-2">
-        <Button onClick={handleDeleteJob}>Delete Job</Button>
-      </div>
-      <div className="my-2">
-        <Button onClick={handleUpdateJob}>Update Job</Button>
-      </div>
-    </div>
-  );
+  // const handleDeleteJob = async () => {
+  //   try {
+  //     await deleteJob('testId');
+  //     history.push(Routes.JOB_PAGE);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
+  //
+  // const handleUpdateJob = async () => {
+  //   try {
+  //     await updateJob('testId', '1', '3', '3', '3', '3');
+  //     history.push(Routes.JOB_PAGE);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
+  //
+  // const handleCreateJob = async () => {
+  //   try {
+  //     await createJob(jobId, companyId, jobTitle, userID, availability, applicationStatus, type);
+  //     history.push(Routes.JOB_PAGE);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
+  //
+  // const handleReadJob = async () => {
+  //   try {
+  //     await readJob(jobId, companyId, jobTitle, userID, availability, applicationStatus, type);
+  //     history.push(Routes.JOB_PAGE);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
+  //
+  // return (
+  //   <div className="w-full h-screen flex flex-col justify-center items-center">
+  //     <div className="absolute top-5 left-5">
+  //       <Heading>Job Tracker</Heading>
+  //     </div>
+  //     <Heading>Job Page</Heading>
+  //     <div className="my-2">
+  //       <Button onClick={handleCreateJob}>Create Job</Button>
+  //     </div>
+  //     <div className="my-2">
+  //       <Button onClick={handleDeleteJob}>Delete Job</Button>
+  //     </div>
+  //     <div className="my-2">
+  //       <Button onClick={handleUpdateJob}>Update Job</Button>
+  //     </div>
+  //   </div>
+  // );
 });
 
 export default JobPage;
