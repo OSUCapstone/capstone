@@ -96,7 +96,7 @@ async function deleteJobSkill(req) {
   try {
     await query(
       SQL`DELETE FROM job_skill 
-      WHERE skill_id = ${req.body.skill_id} && job_id = ${req.body.job_id};`
+      WHERE skill_id = ${req.body.skill_id} AND job_id = ${req.body.job_id};`
     );
     return true;
   } catch (err) {
