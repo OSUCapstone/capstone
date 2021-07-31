@@ -24,42 +24,35 @@ const query = async (query) => {
   }
 };
 
-async function createJob(vals) {
+async function createJob(req) {
   try {
     // Create unique id for job
     let new_job_id = uuidv4();
 
-    // Check to see if job exists
-    let jobName = await query(
-      SQL`SELECT * FROM job WHERE job_title = $(vals.jobTitle);`
+    let user_id = await query(
+      SQL`SELECT user_id FROM token WHERE token = '${req.headers.authorization}';`
+    )
+
+    await query(
+      SQL`
+      INSERT INTO job (job_id, company_id, user_id, job_title, availability, application_status, type)
+      VALUES (${new_job_id}, ${req.body.company_id}, ${user_id}, ${req.body.job_title}, ${req.body.availability}, ${req.body.application_status}, ${req.body.type});`
     );
-
-    // If job exists, return false
-    if(jobName.length > 0){
-      return false;
-
-    } else { // If job does not exist, create new job
-      await query(
-        SQL`
-        INSERT INTO job (job_id, company_id, user_id, job_title, availability, application_status, type)
-        VALUES (${vals.jobId}, ${vals.companyId}, ${vals.userID}, ${vals.jobTitle}, ${vals.availability}, ${vals.applicationStatus}, ${vals.type});`
-      );
-      return true;
-    }
+    return true;
   } catch (err) {
     console.log(err);
     return false;
   }
 }
 
-async function readJob(vals) {
+async function readJob(req) {
   try {
     await query(
       SQL`SELECT * 
       FROM job 
       LEFT JOIN company
-      ON job.company_id=company.company_id
-      WHERE job_id = ${vals.jobId};`
+      ON job.company_id = company.company_id
+      WHERE job_id = ${req.body.job_id};`
     );
     return true;
   } catch (err) {
@@ -68,17 +61,17 @@ async function readJob(vals) {
   }
 }
 
-async function updateJob(vals) {
+async function updateJob(req) {
   try {
     await query(
       SQL`UPDATE job
       SET
-      company_id = ${vals.companyId},
-      job_title = ${vals.jobTitle},
-      availability = ${vals.availability},
-      application_status = ${vals.applicationStatus},
-      type = ${vals.type}
-      WHERE job_id = ${vals.jobId};`
+      company_id = ${req.body.company_id},
+      job_title = ${req.body.job_title},
+      availability = ${req.body.availability},
+      application_status = ${req.body.application_status},
+      type = ${req.body.type}
+      WHERE job_id = ${req.body.job_id};`
     );
     return true;
   } catch (err) {
@@ -87,10 +80,10 @@ async function updateJob(vals) {
   }
 }
 
-async function deleteJob(vals) {
+async function deleteJob(req) {
   try {
     await query(
-      SQL`DELETE FROM job WHERE job_id = ${vals.jobId};`
+      SQL`DELETE FROM job WHERE job_id = ${req.body.job_id};`
     );
     return true;
   } catch (err) {
@@ -101,12 +94,8 @@ async function deleteJob(vals) {
 
 module.exports = async (req, res) => {
   try {
-    if (req.body.crud == 'delete') {
-      if (await deleteJob(req.body)) {
-        return res.status(200).send();
-      }
-    } else if (req.body.crud == 'update') {
-      if (await updateJob(req.body)) {
+    if (req.body.crud == 'create') {
+      if (await createJob(req.body)) {
         return res.status(200).send();
       }
     } else if (req.body.crud == 'read') {
@@ -114,11 +103,15 @@ module.exports = async (req, res) => {
         //TODO: return values from database
         return res.status(200).send();
       }
-    } else if (req.body.crud == 'create') {
-      if (await createJob(req.body)) {
+    } else if (req.body.crud == 'update') {
+      if (await updateJob(req.body)) {
         return res.status(200).send();
       }
-    }
+    } else if (req.body.crud == 'delete') {
+      if (await deleteJob(req.body)) {
+        return res.status(200).send();
+      }
+    } 
 
     // None of the available routes executed
     return res.status(501).send();
