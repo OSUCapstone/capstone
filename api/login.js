@@ -5,10 +5,10 @@ const { v4: uuidv4 } = require("uuid");
 // Initialize the database.
 const db = mysql({
   config: {
-    host: "35.199.154.62",
-    user: "admin",
-    password: "njkfj4-f3j43",
-    database: "test",
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
   },
 });
 
