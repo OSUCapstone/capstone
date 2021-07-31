@@ -4,10 +4,10 @@ const mysql = require("serverless-mysql");
 // Initialize the database.
 const db = mysql({
   config: {
-    host: "34.74.53.112",
-    user: "root",
-    password: "jobtracker",
-    database: "test",
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
   },
 });
 
