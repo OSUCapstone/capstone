@@ -5,10 +5,10 @@ const { v4: uuidv4 } = require("uuid");
 // Initialize the database.
 const db = mysql({
   config: {
-    host: "35.199.154.62",
-    user: "admin",
-    password: "njkfj4-f3j43",
-    database: "test",
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
   },
 });
 
@@ -26,12 +26,26 @@ const query = async (query) => {
 
 async function createJob(vals) {
   try {
-    await query(
-      SQL`
-      INSERT INTO job (job_id, company_id, user_id, job_title, availability, application_status, type)
-      VALUES (${vals.jobId}, ${vals.companyId}, ${vals.userID}, ${vals.jobTitle}, ${vals.availability}, ${vals.applicationStatus}, ${vals.type});`
+    // Create unique id for job
+    let new_job_id = uuidv4();
+
+    // Check to see if job exists
+    let jobName = await query(
+      SQL`SELECT * FROM job WHERE job_title = $(vals.jobTitle);`
     );
-    return true;
+
+    // If job exists, return false
+    if(jobName.length > 0){
+      return false;
+
+    } else { // If job does not exist, create new job
+      await query(
+        SQL`
+        INSERT INTO job (job_id, company_id, user_id, job_title, availability, application_status, type)
+        VALUES (${vals.jobId}, ${vals.companyId}, ${vals.userID}, ${vals.jobTitle}, ${vals.availability}, ${vals.applicationStatus}, ${vals.type});`
+      );
+      return true;
+    }
   } catch (err) {
     console.log(err);
     return false;
