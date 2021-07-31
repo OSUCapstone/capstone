@@ -4,13 +4,13 @@ const { v4: uuidv4 } = require("uuid");
 
 // Initialize the database.
 const db = mysql({
-    config: {
-      host: process.env.DB_HOST,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
-    },
-  });
+  config: {
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+  },
+});
 
 // Main helper function that forms and ends a connection to the database with
 // each query.
