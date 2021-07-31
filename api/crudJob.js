@@ -5,9 +5,9 @@ const { v4: uuidv4 } = require("uuid");
 // Initialize the database.
 const db = mysql({
   config: {
-    host: "34.74.53.112",
-    user: "root",
-    password: "jobtracker",
+    host: "35.199.154.62",
+    user: "admin",
+    password: "njkfj4-f3j43",
     database: "test",
   },
 });
@@ -41,9 +41,10 @@ async function createJob(vals) {
 async function readJob(vals) {
   try {
     await query(
-      SQL`SELECT job_id, company_id, job_title, user_id,
-      availability, application_status, type
-      FROM job
+      SQL`SELECT * 
+      FROM job 
+      LEFT JOIN company
+      ON job.company_id=company.company_id
       WHERE job_id = ${vals.jobId};`
     );
     return true;
