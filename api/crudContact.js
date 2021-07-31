@@ -29,6 +29,11 @@ async function createContact(req) {
       // Create unique id for contact
       let new_contact_id = uuidv4();
 
+      // Get user's id
+      let user_id = await query(
+        SQL`SELECT user_id FROM token WHERE token = '${req.headers.authorization}';`
+      );
+
       // Check to see if contact exists
       let contact = await query(
         SQL`SELECT * FROM contact WHERE contact_name = $(req.body.contact);`
@@ -42,7 +47,7 @@ async function createContact(req) {
         await query(
           SQL`
           INSERT INTO contact (contact_id, contact_name, company_id, user_id, role, email, phone_number)
-          VALUES (${new_contact_id}, ${req.body.contact_name}, ${vals.company_id}, ${vals.user_id}, ${req.body.role}, ${req.body.email}, ${req.body.phone_number});`
+          VALUES (${new_contact_id}, ${req.body.contact_name}, ${req.body.company_id}, ${user_id}, ${req.body.role}, ${req.body.email}, ${req.body.phone_number});`
         );
         return true;
       } 
