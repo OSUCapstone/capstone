@@ -26,31 +26,66 @@ const query = async (query) => {
 
 async function createCompany(req) {
   try {
-    // Create unique id for job-skill
+    // Create unique id for company
     let new_company_id = uuidv4();
 
     // Get user's id
     let user_id = await query(
-      SQL`SELECT user_id FROM token WHERE token = '${req.headers.authorization}';`
-    );
-    
-    // Check to see if job-skill exists
-    let company = await query(
-      SQL`SELECT * 
-      FROM company 
-      WHERE user_id = ${user_id};`
+      SQL`SELECT user_id FROM token WHERE token = ${req.headers.authorization};`
     );
 
-    // If job-skill exists, return false
-    if (company.length > 0) {
-      return false;
+    // Check for valid user id
+    if (user_id && user_id.length > 0) {
+      // Extract id from response body
+      user_id = user_id[0].user_id;
 
-    } else { // If company does not exist, create company
-      await query(
-        SQL`INSERT INTO company (company_id, company_name, user_id) 
-        VALUES (${new_company_id}, ${req.body.company_name}, ${user_id});`
+      // Check to see if company exists
+      let company = await query(
+        SQL`SELECT * 
+        FROM company 
+        WHERE company_name = ${req.body.company_name} AND user_id = ${user_id};`
       );
-      return true;
+        
+      // If company exists, return false
+      if (company && company.length > 0) {
+        console.log('Company exists!');
+        return false;
+      } else { // If company does not exist, create company
+        await query(
+          SQL`INSERT INTO company (company_id, company_name, user_id) 
+          VALUES (${new_company_id}, ${req.body.company_name}, ${user_id});`
+        );
+        return true;
+      }
+    } else {
+      console.log('user_id in createCompany() is invalid');
+      return false;
+    }
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+}
+
+async function readAllCompanies(req) {
+  try {
+    // Get user's id
+    let user_id = await query(
+      SQL`SELECT user_id FROM token WHERE token = ${req.headers.authorization};`
+    );
+
+    // Check for valid user id
+    if (user_id && user_id.length > 0) {
+      // Extract id from response body
+      user_id = user_id[0].user_id;
+
+      // Get all companies for this user
+      return await query(
+        SQL`SELECT * FROM company WHERE user_id = ${user_id};`
+      );
+    } else {
+      console.log('user_id in readAllCompanies() is invalid');
+      return false;
     }
   } catch (err) {
     console.log(err);
@@ -65,7 +100,7 @@ async function readCompany(req) {
       FROM company 
       LEFT JOIN contact
       ON company.company_id = contact.company_id
-      WHERE company.job_id = ${req.body.company_id};`
+      WHERE company.company_id = ${req.body.company_id};`
     );
     return true;
   } catch (err) {
@@ -106,7 +141,18 @@ module.exports = async (req, res) => {
   try {
     if (req.body.crud == 'create') {
       if (await createCompany(req)) {
-        return res.status(200).send();
+        return res.status(200).send(true);
+      } else {
+        // Server conflict, token invalid or company exists
+        return res.status(409).send(false);
+      }
+    } else if (req.body.crud == 'read_all') {
+      let response = await readAllCompanies(req);
+      if (response != false) {
+        return res.status(200).send(response);
+      } else {
+        // Server conflict
+        return res.status(409).send(false);
       }
     } else if (req.body.crud == 'read') {
       if (await readCompany(req)) {

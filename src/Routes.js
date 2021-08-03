@@ -1,11 +1,13 @@
 const APP_BASE_ROUTE = "/home";
 const AUTH_BASE_ROUTE = "";
 const JOBS_BASE_ROUTE = `${APP_BASE_ROUTE}/jobs`;
+const COMPANIES_BASE_ROUTE = `${APP_BASE_ROUTE}/companies`;
 
 const Routes = {
   APP_BASE_ROUTE,
   AUTH_BASE_ROUTE,
   JOBS_BASE_ROUTE,
+  COMPANIES_BASE_ROUTE,
 
   LOGIN_PAGE: `${AUTH_BASE_ROUTE}/login`,
   SIGNUP_PAGE: `${AUTH_BASE_ROUTE}/register`,
@@ -16,8 +18,9 @@ const Routes = {
   SKILLS_PAGE: `${APP_BASE_ROUTE}/skills/all`,
   SKILL_PAGE: `${APP_BASE_ROUTE}/skills/:id`,
 
-  COMPANIES_PAGE: `${APP_BASE_ROUTE}/companies/all`,
-  COMPANY_PAGE: `${APP_BASE_ROUTE}/companies/:id`,
+  COMPANIES_PAGE: `${COMPANIES_BASE_ROUTE}/all`,
+  COMPANY_CREATE_PAGE: `${COMPANIES_BASE_ROUTE}/add`,
+  COMPANY_PAGE: `${COMPANIES_BASE_ROUTE}/:id`,  
 
   CONTACTS_PAGE: `${APP_BASE_ROUTE}/contacts/all`,
 };
