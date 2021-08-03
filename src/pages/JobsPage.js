@@ -1,32 +1,12 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
-import { Button } from "../components";
 
+import { Button } from "../components";
 import Routes from "../Routes";
 
 const jobs = [
   {
     job_id: "1234",
-    company_id: "1234",
-    company_name: "Company name??",
-    user_id: "1234",
-    job_title: "Test Job",
-    availability: "Available",
-    application_status: "Applied",
-    type: "Full Time",
-  },
-  {
-    job_id: "12345",
-    company_id: "1234",
-    company_name: "Company name??",
-    user_id: "1234",
-    job_title: "Test Job",
-    availability: "Available",
-    application_status: "Applied",
-    type: "Full Time",
-  },
-  {
-    job_id: "12345",
     company_id: "1234",
     company_name: "Company name??",
     user_id: "1234",
