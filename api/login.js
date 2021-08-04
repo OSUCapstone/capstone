@@ -36,7 +36,7 @@ module.exports = async (req, res) => {
       let token = uuidv4();
       let userId = users[0].user_id;
 
-      await query(SQL`INSERT INTO token VALUES (${token}, ${userId}, NULL);`);
+      await query(SQL`INSERT INTO token VALUES (${token}, ${userId});`);
       return res.status(200).send(token);
 
       // If not, return not found status code
