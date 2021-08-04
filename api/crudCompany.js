@@ -117,7 +117,6 @@ const updateCompany = async (req) => {
         company_name = ${req.body.company_name}
         WHERE company_id = ${req.body.company_id};`
   );
-  return true;
 };
 
 const deleteCompany = async (req) => {
