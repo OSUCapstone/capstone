@@ -2,8 +2,6 @@ import { Redirect, Route, Switch } from "react-router";
 import { NavBar, PrivateRoute } from "./components";
 
 import { 
-  JobPage, 
-  JobsPage, 
   LoginPage, 
   SignupPage, 
   CompanyPage, 
@@ -11,7 +9,12 @@ import {
   CompaniesPage, 
   ContactsPage,
   ContactCreatePage,
-  ContactPage
+  ContactPage,
+  JobPage, 
+  JobsPage, 
+  SkillPage,
+  SkillCreatePage,
+  SkillsPage,
   } from "./pages";
 import Routes from "./Routes";
 
@@ -45,11 +48,15 @@ const App = () => (
 
             {/* Skills */}
             <PrivateRoute exact path={Routes.SKILLS_PAGE}>
-              <JobsPage />
+              <SkillsPage />
+            </PrivateRoute>
+            
+            <PrivateRoute path={Routes.SKILL_CREATE_PAGE}>
+              <SkillCreatePage />
             </PrivateRoute>
 
             <PrivateRoute path={Routes.SKILL_PAGE}>
-              <JobPage />
+              <SkillPage />
             </PrivateRoute>
 
             {/* Companies */}
