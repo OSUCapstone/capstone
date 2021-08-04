@@ -1,41 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { withRouter } from "react-router-dom";
+
 import { Button } from "../components";
 import { requestPost } from "../requests";
-
 import Routes from "../Routes";
-
-const getAllCompanies = async () => {
-  try {
-    let response =  await requestPost(
-      '/api/crudCompany',
-      {
-        crud: 'read_all',
-      }
-    );
-
-    if (response !== false) {
-      return response;
-    } else {
-      console.log('Failed to get all companies!');
-    }
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-// const companies = [
-//   {
-//     company_id: "1234",
-//     company_name: "First Co.",
-//     user_id: "1234",
-//   },
-//   {
-//     company_id: "12345",
-//     company_name: "Second Inc.",
-//     user_id: "1234",
-//   },
-// ];
 
 const CompanyRow = ({
   company_name,
@@ -54,7 +22,27 @@ const CompanyRow = ({
   </div>
 );
 
+const ListPlaceholder = ({ children }) => (
+  <div className="w-full flex-grow flex justify-center items-center text-gray-500 italic text-lg">
+    {children}
+  </div>
+);
+
 const CompaniesPage = withRouter(({ match, history, location }) => {
+  const [companies, setCompanies] = useState(null);
+
+  useEffect(() => {
+    const init = async () => {
+      let res = await requestPost("/api/crudCompany", { crud: "readAll" });
+      if (res) {
+        setCompanies(res);
+      } else {
+        setCompanies([]);
+      }
+    };
+    init ();
+  }, []);
+
   return (
     <div className="w-full flex flex-col flex-grow overflow-hidden">
       {/* Top level information */}
@@ -65,26 +53,25 @@ const CompaniesPage = withRouter(({ match, history, location }) => {
             history.push(`${Routes.COMPANY_CREATE_PAGE}`)
           }
         >Add Company</Button>
-        <Button
-          onClick={() => 
-            getAllCompanies().then((values) => {
-              console.log(values);
-            })
-          }
-        >Get All Companies</Button>
       </div>
 
       {/* Companies list */}
       <div className="w-full flex-grow overflow-scroll">
         <div className="w-full flex flex-col">
-          {/* {companies.map((company) => (
-            <CompanyRow
-              {...company}
-              onClick={() =>
-                history.push(`${Routes.COMPANY_PAGE}`.replace(':id', `${company.company_id}`))
-              }
-            />
-          ))} */}
+          {companies == null && <ListPlaceholder>Loading...</ListPlaceholder>}
+          {companies && companies.length === 0 && (
+            <ListPlaceholder>List Empty...</ListPlaceholder>
+          )}
+          {companies &&
+            companies.length > 0 &&
+            companies.map((company) => (
+              <CompanyRow
+                {...company}
+                onClick={() =>
+                  history.push(`${Routes.COMPANIES_BASE_ROUTE}/${company.company_id}`)
+                }
+              />
+            ))}
         </div>
       </div>
     </div>
