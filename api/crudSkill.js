@@ -5,10 +5,10 @@ const { v4: uuidv4 } = require("uuid");
 // Initialize the database.
 const db = mysql({
   config: {
-    host: "34.74.53.112",
-    user: "root",
-    password: "jobtracker",
-    database: "test",
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
   },
 });
 
@@ -24,105 +24,97 @@ const query = async (query) => {
   }
 };
 
-async function createSkill(req) {
-  try {
-    // Create unique id for skill
-    let new_skill_id = uuidv4();
-
-    // Get user's id
-    let user_id = await query(
-      SQL`SELECT user_id FROM token WHERE token = '${req.headers.authorization}';`
-    );
-    
-    // Check to see if skill exists
-    let skill = await query(
-      SQL`SELECT * FROM skill WHERE skill_name = ${req.body.skill_name} AND user_id = ${user_id};`
-    );
-
-    // If skill is taken, return false
-    if (skill && skill.length > 0) {
-      return false;
-
-      // If not, create new skill in table
-    } else {
-      await query(
-        SQL`INSERT INTO skill (skill_id, skill_name, user_id, proficiency) VALUES 
-        (${new_skill_id}, ${req.body.skill_name}, ${user_id}, ${req.body.proficiency});`
-      );
-      return true;
-    }
-  } catch (err) {
-    console.log(err);
-    return false;
-  }
-}
-
-async function readSkill(req) {
-  try {
-    await query(
-      SQL`SELECT * FROM skill WHERE skill_id = ${req.body.skill_id};`
-    );
-    return true;
-  } catch (err) {
-    console.log(err);
-    return false;
-  }
-}
-
-async function updateSkill(req) {
-  try {
-    await query(
-      SQL`UPDATE skill
-      SET
-      skill_name = ${req.body.skill_name},
-      proficiency = ${req.body.proficiency}
-      WHERE skill_id = ${req.body.skill_id};`
-    );
-    return true;
-  } catch (err) {
-    console.log(err);
-    return false;
-  }
-}
-
-async function deleteSkill(req) {
-  try {
-    await query(
-      SQL`DELETE FROM skill WHERE skill_id = ${req.body.skill_id};`
-    );
-    return true;
-  } catch (err) {
-    console.log(err);
-    return false;
-  }
-}
-
 module.exports = async (req, res) => {
   try {
-    if (req.body.crud == 'create') {
-      if (await createSkill(req)) {
-        return res.status(200).send();
-      }
-    } else if (req.body.crud == 'read') {
-      if (await readSkill(req)) {
-        //TODO: return values from database
-        return res.status(200).send();
-      }
-    } else if (req.body.crud == 'update') {
-      if (await updateSkill(req)) {
-        return res.status(200).send();
-      }
-    } else if (req.body.crud == 'delete') {
-      if (await deleteSkill(req)) {
-        return res.status(200).send();
-      }
+    let result;
+    switch (req.body.crud) {
+      case ("create"):
+        result = await createSkill(req);
+        break;
+      case ("read"):
+        result = await readSkill(req);
+        break;
+      case ("readAll"):
+        result = await readAllSkills(req);
+        break;
+      case ("update"):
+        await updateSkill(req);
+        break;
+      case ("delete"):
+        await deleteSkill(req);
+        break;
+      default:
+        break;
     }
-
-    // None of the available routes executed
-    return res.status(501).send();
-
-  }  catch (err) {
+    if (result) {
+      return res.send(result);
+    } else {
+      return res.send();
+    }
+  } catch (err) {
     console.log(err);
     return res.status(503).send();
   }
+};
+
+const createSkill = async (req) => {
+  // Create unique id for skill
+  let new_skill_id = uuidv4();
+
+  // Get user ID from token
+  let user_id = await query(
+    SQL`SELECT user_id FROM token WHERE token = ${req.headers.authorization};`
+  );
+  user_id = user_id[0].user_id;
+
+  // Check to see if skill exists
+  let skill = await query(
+    SQL`SELECT * FROM skill WHERE skill_name = ${req.body.skill_name} AND user_id = ${user_id};`
+  );
+
+  // If skill does not exist, create it
+  if (!skill || skill.length == 0) {
+    await query(
+      SQL`INSERT INTO skill (skill_id, skill_name, user_id, proficiency) VALUES 
+          (${new_skill_id}, ${req.body.skill_name}, ${user_id}, ${req.body.proficiency});`
+    );
+    return true;
+  } else {
+    return false;
+  }
+};
+
+const readSkill = async (req) => {
+  // Read and return skill
+  let results = await query(
+    SQL`SELECT * FROM skill WHERE skill_id = ${req.body.skill_id};`
+  );
+  return results[0];
+};
+
+const readAllSkills = async (req) => {
+  // Get user ID from token
+  let user_id = await query(
+    SQL`SELECT user_id FROM token WHERE token = ${req.headers.authorization};`
+  );
+  user_id = user_id[0].user_id;
+
+  // Read and return skills
+  return await query(
+    SQL`SELECT * FROM skill WHERE user_id = ${user_id};`
+  );
+}
+
+const updateSkill = async (req) => {
+  await query(
+    SQL`UPDATE skill
+        SET
+        skill_name = ${req.body.skill_name},
+        proficiency = ${req.body.proficiency}
+        WHERE skill_id = ${req.body.skill_id};`
+  );
+};
+
+const deleteSkill = async (req) => {
+  await query(SQL`DELETE FROM skill WHERE skill_id = ${req.body.skill_id};`);
 };
