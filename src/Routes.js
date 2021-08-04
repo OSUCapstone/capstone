@@ -2,12 +2,14 @@ const APP_BASE_ROUTE = "/home";
 const AUTH_BASE_ROUTE = "";
 const JOBS_BASE_ROUTE = `${APP_BASE_ROUTE}/jobs`;
 const COMPANIES_BASE_ROUTE = `${APP_BASE_ROUTE}/companies`;
+const CONTACTS_BASE_ROUTE = `${APP_BASE_ROUTE}/contacts`;
 
 const Routes = {
   APP_BASE_ROUTE,
   AUTH_BASE_ROUTE,
   JOBS_BASE_ROUTE,
   COMPANIES_BASE_ROUTE,
+  CONTACTS_BASE_ROUTE,
 
   LOGIN_PAGE: `${AUTH_BASE_ROUTE}/login`,
   SIGNUP_PAGE: `${AUTH_BASE_ROUTE}/register`,
@@ -22,7 +24,9 @@ const Routes = {
   COMPANY_CREATE_PAGE: `${COMPANIES_BASE_ROUTE}/add`,
   COMPANY_PAGE: `${COMPANIES_BASE_ROUTE}/:id`,  
 
-  CONTACTS_PAGE: `${APP_BASE_ROUTE}/contacts/all`,
+  CONTACTS_PAGE: `${CONTACTS_BASE_ROUTE}/all`,
+  CONTACT_CREATE_PAGE: `${CONTACTS_BASE_ROUTE}/add`,
+  CONTACT_PAGE: `${CONTACTS_BASE_ROUTE}/:id`,
 };
 
 export default Routes;
