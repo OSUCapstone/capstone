@@ -1,7 +1,7 @@
 import { Redirect, Route, Switch } from "react-router";
 import { NavBar, PrivateRoute } from "./components";
 
-import { JobPage, JobsPage, LoginPage, SignupPage, CompanyPage } from "./pages";
+import { JobPage, JobsPage, LoginPage, SignupPage, CompanyPage, CompanyCreatePage, CompaniesPage } from "./pages";
 import Routes from "./Routes";
 
 const App = () => (
@@ -42,6 +42,14 @@ const App = () => (
             </PrivateRoute>
 
             {/* Companies */}
+            <PrivateRoute path={Routes.COMPANIES_PAGE}>
+              <CompaniesPage />
+            </PrivateRoute>
+
+            <PrivateRoute path={Routes.COMPANY_CREATE_PAGE}>
+              <CompanyCreatePage />
+            </PrivateRoute>
+
             <PrivateRoute path={Routes.COMPANY_PAGE}>
               <CompanyPage />
             </PrivateRoute>

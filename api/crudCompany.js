@@ -24,110 +24,102 @@ const query = async (query) => {
   }
 };
 
-async function createCompany(req) {
-  try {
-    // Create unique id for job-skill
-    let new_company_id = uuidv4();
-
-    // Get user's id
-    let user_id = await query(
-      SQL`SELECT user_id FROM token WHERE token = '${req.headers.authorization}';`
-    );
-    
-    // Check to see if job-skill exists
-    let company = await query(
-      SQL`SELECT * 
-      FROM company 
-      WHERE user_id = ${user_id};`
-    );
-
-    // If job-skill exists, return false
-    if (company.length > 0) {
-      return false;
-
-    } else { // If company does not exist, create company
-      await query(
-        SQL`INSERT INTO company (company_id, company_name, user_id) 
-        VALUES (${new_company_id}, ${req.body.company_name}, ${user_id});`
-      );
-      return true;
-    }
-  } catch (err) {
-    console.log(err);
-    return false;
-  }
-}
-
-async function readCompany(req) {
-  try {
-    await query(
-      SQL`SELECT * 
-      FROM company 
-      LEFT JOIN contact
-      ON company.company_id = contact.company_id
-      WHERE company.job_id = ${req.body.company_id};`
-    );
-    return true;
-  } catch (err) {
-    console.log(err);
-    return false;
-  }
-}
-
-async function updateCompany(req) {
-  try {
-    await query(
-      SQL`UPDATE company
-      SET
-      company_name = ${req.body.company_name}
-      WHERE company_id = ${req.body.company_id};`
-    );
-    return true;
-  } catch (err) {
-    console.log(err);
-    return false;
-  }
-}
-
-async function deleteCompany(req) {
-  try {
-    await query(
-      SQL`DELETE FROM company 
-      WHERE company_id = ${req.body.company_id};`
-    );
-    return true;
-  } catch (err) {
-    console.log(err);
-    return false;
-  }
-}
-
 module.exports = async (req, res) => {
   try {
-    if (req.body.crud == 'create') {
-      if (await createCompany(req)) {
-        return res.status(200).send();
-      }
-    } else if (req.body.crud == 'read') {
-      if (await readCompany(req)) {
-        //TODO: return values from database
-        return res.status(200).send();
-      }
-    } else if (req.body.crud == 'update') {
-      if (await updateCompany(req)) {
-        return res.status(200).send();
-      }
-    } else if (req.body.crud == 'delete') {
-      if (await deleteCompany(req)) {
-        return res.status(200).send();
-      }
+    let result;
+    switch (req.body.crud) {
+      case "create":
+        result = await createCompany(req);
+        break;
+      case "read":
+        result = await readCompany(req);
+        break;
+      case "readAll":
+        result = await readAllCompanies(req);
+        break;
+      case "update":
+        await updateCompany(req);
+        break;
+      case "delete":
+        await deleteCompany(req);
+        break;
+      default:
+        break;
     }
-
-    // None of the available routes executed
-    return res.status(501).send();
-
-  }  catch (err) {
+    if (result) {
+      res.send(result);
+    } else {
+      res.send();
+    }
+  } catch (err) {
     console.log(err);
     return res.status(503).send();
   }
+};
+
+/* Returns true if company is created, else false */
+const createCompany = async (req) => {
+  // Create unique id for company
+  let new_company_id = uuidv4();
+
+  // Get user ID from token
+  let user_id = await query(
+    SQL`SELECT user_id FROM token WHERE token = ${req.headers.authorization};`
+  );
+  user_id = user_id[0].user_id;
+
+  // Check to see if company exists
+  let company = await query(
+    SQL`SELECT * 
+        FROM company 
+        WHERE company_name = ${req.body.company_name} AND user_id = ${user_id};`
+  );
+
+  // If company does not exist, create it
+  if (!company || company.length == 0) {
+    await query(
+      SQL`INSERT INTO company (company_id, company_name, user_id) 
+          VALUES (${new_company_id}, ${req.body.company_name}, ${user_id});`
+    );
+    return true;
+  } else {
+    return false;
+  }
+};
+
+const readCompany = async (req) => {
+  // Read and return company
+  let results = await query(
+    SQL`SELECT * 
+        FROM company 
+        WHERE company.company_id = ${req.body.company_id};`
+  );
+  return results[0];
+};
+
+const readAllCompanies = async (req) => {
+  // Get user ID from token
+  let user_id = await query(
+    SQL`SELECT user_id FROM token WHERE token = ${req.headers.authorization};`
+  );
+  user_id = user_id[0].user_id;
+
+  // Read and return companies
+  return await query(
+    SQL`SELECT * FROM company WHERE user_id = ${user_id};`
+  );
+};
+
+const updateCompany = async (req) => {
+  await query(
+    SQL`UPDATE company
+        SET
+        company_name = ${req.body.company_name}
+        WHERE company_id = ${req.body.company_id};`
+  );
+  return true;
+};
+
+const deleteCompany = async (req) => {
+  await query(SQL`DELETE FROM company WHERE company_id = ${req.body.company_id};`);
 };
