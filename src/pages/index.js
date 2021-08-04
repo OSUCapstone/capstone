@@ -5,3 +5,6 @@ export { default as JobPage } from "./JobPage";
 export { default as CompaniesPage} from "./CompaniesPage";
 export { default as CompanyPage } from "./CompanyPage";
 export { default as CompanyCreatePage } from "./CompanyCreatePage";
+export { default as ContactsPage } from "./ContactsPage";
+export { default as ContactPage } from "./ContactPage";
+export { default as ContactCreatePage } from "./ContactCreatePage";
