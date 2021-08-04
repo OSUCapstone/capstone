@@ -58,9 +58,6 @@ module.exports = async (req, res) => {
 };
 
 const createContact = async (req) => {
-  console.log('LOGGING REQUEST BODY');
-  console.log(req.body);
-
   // Create unique id for contact
   let new_contact_id = uuidv4();
 
