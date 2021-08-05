@@ -104,7 +104,7 @@ const readAllJobSkills = async (req) => {
   // Read and return job-skills
   return await query(
     SQL`SELECT * FROM job_skill 
-        WWHERE skill_id = ${req.body.skill_id} && job_id = ${req.body.job_id};`
+        WWHERE skill_id = ${req.body.skill_id} AND job_id = ${req.body.job_id};`
   );
 }
 
@@ -121,7 +121,7 @@ const updateJobSkill = async (req) => {
 const deleteJobSkill = async (req) => {
   await query(
     SQL`DELETE FROM job_skill 
-    WHERE skill_id = ${req.body.skill_id} && job_id = ${req.body.job_id};`
+    WHERE skill_id = ${req.body.skill_id} AND job_id = ${req.body.job_id};`
   );
 };
 
