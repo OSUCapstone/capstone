@@ -1,40 +1,34 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { withRouter } from "react-router-dom";
 
-import { Heading, TextInput, Button } from "../components";
-import { createCompany, requestPost } from "../requests";
-import Routes from "../Routes";
+import { Heading, Button } from "../components";
+import { requestPost } from "../requests";
 
 const CompanyPage = withRouter(({ match, history, location }) => {
   const [company, setCompany] = useState("");
-
-  const handleCreateCompany = async () => {
-    try {
-      let response = await requestPost("/api/getUserId");
-      let userId = response.data;
-      await createCompany(company, userId);
-      history.push(Routes.COMPANY_PAGE);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  
+  useEffect(() => {
+    const init = async () => {      
+      // Extract company_id from route
+      let id = location.pathname;
+      id = id.substr(id.lastIndexOf('/') + 1);
+      
+      // Read company information
+      let res = await requestPost("/api/crudCompany", { crud: "read", company_id: id });
+      if (res) {
+        console.log(res);
+        setCompany(res);
+      } else {
+        setCompany([]);
+      }
+    };
+    init ();
+  }, []);
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-center">
-      {/* <div className="absolute top-5 left-5">
-        <Heading>Job Tracker</Heading>
-      </div> */}
-      <Heading>Companies</Heading>
-      <div className="my-2">
-        <TextInput
-          value={company}
-          setValue={setCompany}
-          placeholder="Enter company name..."
-        />
-      </div>
-      <div className="my-2">
-        <Button onClick={handleCreateCompany}>Add Company</Button>
-      </div>
+      {company == null && <Heading>Loading...</Heading>}
+      {company && <Heading>{company.company_name}</Heading>}
     </div>
   );
 });

@@ -1,91 +1,72 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { withRouter } from "react-router-dom";
-import { Button } from "../components";
 
+import { Button } from "../components";
+import requestPost from "../requests/requestPost";
 import Routes from "../Routes";
 
-const jobs = [
-  {
-    job_id: "1234",
-    company_id: "1234",
-    company_name: "Company name??",
-    user_id: "1234",
-    job_title: "Test Job",
-    availability: "Available",
-    application_status: "Applied",
-    type: "Full Time",
-  },
-  {
-    job_id: "12345",
-    company_id: "1234",
-    company_name: "Company name??",
-    user_id: "1234",
-    job_title: "Test Job",
-    availability: "Available",
-    application_status: "Applied",
-    type: "Full Time",
-  },
-  {
-    job_id: "12345",
-    company_id: "1234",
-    company_name: "Company name??",
-    user_id: "1234",
-    job_title: "Test Job",
-    availability: "Available",
-    application_status: "Applied",
-    type: "Full Time",
-  },
-  {
-    job_id: "12345",
-    company_id: "1234",
-    company_name: "Company name??",
-    user_id: "1234",
-    job_title: "Test Job",
-    availability: "Available",
-    application_status: "Applied",
-    type: "Full Time",
-  },
-  {
-    job_id: "12345",
-    company_id: "1234",
-    company_name: "Company name??",
-    user_id: "1234",
-    job_title: "Test Job",
-    availability: "Available",
-    application_status: "Applied",
-    type: "Full Time",
-  },
-  {
-    job_id: "12345",
-    company_id: "1234",
-    company_name: "Company name??",
-    user_id: "1234",
-    job_title: "Test Job",
-    availability: "Available",
-    application_status: "Applied",
-    type: "Full Time",
-  },
-  {
-    job_id: "12345",
-    company_id: "1234",
-    company_name: "Company name??",
-    user_id: "1234",
-    job_title: "Test Job",
-    availability: "Available",
-    application_status: "Applied",
-    type: "Full Time",
-  },
-  {
-    job_id: "12345",
-    company_id: "1234",
-    company_name: "Company name??",
-    user_id: "1234",
-    job_title: "Test Job",
-    availability: "Available",
-    application_status: "Applied",
-    type: "Full Time",
-  },
-];
+// const jobs = [
+//   {
+//     job_id: "1234",
+//     company_id: "1234",
+//     company_name: "Company name??",
+//     user_id: "1234",
+//     job_title: "Test Job",
+//     availability: "Available",
+//     application_status: "Applied",
+//     type: "Full Time",
+//   },
+//   {
+//     job_id: "12345",
+//     company_id: "1234",
+//     company_name: "Company name??",
+//     user_id: "1234",
+//     job_title: "Test Job",
+//     availability: "Available",
+//     application_status: "Applied",
+//     type: "Full Time",
+//   },
+//   {
+//     job_id: "12345",
+//     company_id: "1234",
+//     company_name: "Company name??",
+//     user_id: "1234",
+//     job_title: "Test Job",
+//     availability: "Available",
+//     application_status: "Applied",
+//     type: "Full Time",
+//   },
+//   {
+//     job_id: "12345",
+//     company_id: "1234",
+//     company_name: "Company name??",
+//     user_id: "1234",
+//     job_title: "Test Job",
+//     availability: "Available",
+//     application_status: "Applied",
+//     type: "Full Time",
+//   },
+//   {
+//     job_id: "12345",
+//     company_id: "1234",
+//     company_name: "Company name??",
+//     user_id: "1234",
+//     job_title: "Test Job",
+//     availability: "Available",
+//     application_status: "Applied",
+//     type: "Full Time",
+//   },
+//   {
+//     job_id: "12345",
+//     company_id: "1234",
+//     company_name: "Company name??",
+//     user_id: "1234",
+//     job_title: "Test Job",
+//     availability: "Available",
+//     application_status: "Applied",
+//     type: "Full Time",
+//   },
+// ];
 
 const JobRow = ({
   job_title,
@@ -111,7 +92,27 @@ const JobRow = ({
   </div>
 );
 
+const ListPlaceholder = ({ children }) => (
+  <div className="w-full flex-grow flex justify-center items-center text-gray-500 italic text-lg">
+    {children}
+  </div>
+);
+
 const JobsPage = withRouter(({ match, history, location }) => {
+  const [jobs, setJobs] = useState(null);
+
+  useEffect(() => {
+    const init = async () => {
+      let res = await requestPost("/api/crudJob", { crud: "readAll" });
+      if (res) {
+        setJobs(res);
+      } else {
+        setJobs([]);
+      }
+    };
+    init();
+  }, []);
+
   return (
     <div className="w-full flex flex-col flex-grow overflow-hidden">
       {/* Top level information */}
@@ -122,14 +123,20 @@ const JobsPage = withRouter(({ match, history, location }) => {
       {/* Jobs list */}
       <div className="w-full flex-grow overflow-scroll">
         <div className="w-full flex flex-col">
-          {jobs.map((job) => (
-            <JobRow
-              {...job}
-              onClick={() =>
-                history.push(`${Routes.JOBS_BASE_ROUTE}/${job.job_id}`)
-              }
-            />
-          ))}
+          {jobs === null && <ListPlaceholder>Loading...</ListPlaceholder>}
+          {jobs && jobs.length === 0 && (
+            <ListPlaceholder>List Empty...</ListPlaceholder>
+          )}
+          {jobs &&
+            jobs.length > 0 &&
+            jobs.map((job) => (
+              <JobRow
+                {...job}
+                onClick={() =>
+                  history.push(`${Routes.JOBS_BASE_ROUTE}/${job.job_id}`)
+                }
+              />
+            ))}
         </div>
       </div>
     </div>

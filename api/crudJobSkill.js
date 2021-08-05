@@ -4,13 +4,13 @@ const { v4: uuidv4 } = require("uuid");
 
 // Initialize the database.
 const db = mysql({
-    config: {
-      host: process.env.DB_HOST,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
-    },
-  });
+  config: {
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+  },
+});
 
 // Main helper function that forms and ends a connection to the database with
 // each query.
@@ -78,7 +78,7 @@ const createJobSkill = async (req) => {
   if (!jobSkill.length == 0) {
     await query(
       SQL`INSERT INTO job_skill (job_skill_id, skill_id, job_id) 
-      VALUES (${new_job_skill_id}, ${req.body.skill_id}, ${req.body.job_id});`
+          VALUES (${new_job_skill_id}, ${req.body.skill_id}, ${req.body.job_id});`
     );
     return true;
   } else {
