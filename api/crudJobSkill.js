@@ -28,19 +28,19 @@ module.exports = async (req, res) => {
   try {
     let result;
     switch (req.body.crud) {
-      case ("create"):
+      case "create":
         result = await createJobSkill(req);
         break;
-      case ("read"):
+      case "read":
         result = await readJobSkill(req);
         break;
-      case ("readAll"):
+      case "readAll":
         result = await readAllJobSkills(req);
         break;
-      case ("update"):
+      case "update":
         await updateJobSkill(req);
         break;
-      case ("delete"):
+      case "delete":
         await deleteJobSkill(req);
         break;
       default:
