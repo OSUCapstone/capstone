@@ -17,6 +17,7 @@ const Routes = {
   SIGNUP_PAGE: `${AUTH_BASE_ROUTE}/register`,
 
   JOBS_PAGE: `${JOBS_BASE_ROUTE}/all`,
+  JOB_CREATE_PAGE: `${JOBS_BASE_ROUTE}/add`,
   JOB_PAGE: `${JOBS_BASE_ROUTE}/:id`,
 
   SKILLS_PAGE: `${SKILLS_BASE_ROUTE}/all`,

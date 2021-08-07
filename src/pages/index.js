@@ -2,6 +2,7 @@ export { default as LoginPage } from "./LoginPage";
 export { default as SignupPage } from "./SignupPage";
 export { default as JobsPage } from "./JobsPage";
 export { default as JobPage } from "./JobPage";
+export { default as JobCreatePage } from "./JobCreatePage";
 export { default as SkillsPage } from "./SkillsPage";
 export { default as SkillPage} from "./SkillPage";
 export { default as SkillCreatePage } from "./SkillCreatePage";

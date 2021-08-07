@@ -11,6 +11,7 @@ import {
   ContactCreatePage,
   ContactPage,
   JobPage, 
+  JobCreatePage,
   JobsPage, 
   SkillPage,
   SkillCreatePage,
@@ -40,6 +41,10 @@ const App = () => (
             {/* Jobs */}
             <PrivateRoute exact path={Routes.JOBS_PAGE}>
               <JobsPage />
+            </PrivateRoute>
+
+            <PrivateRoute path={Routes.JOB_CREATE_PAGE}>
+              <JobCreatePage />
             </PrivateRoute>
 
             <PrivateRoute path={Routes.JOB_PAGE}>
