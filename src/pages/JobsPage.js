@@ -5,69 +5,6 @@ import { Button } from "../components";
 import requestPost from "../requests/requestPost";
 import Routes from "../Routes";
 
-// const jobs = [
-//   {
-//     job_id: "1234",
-//     company_id: "1234",
-//     company_name: "Company name??",
-//     user_id: "1234",
-//     job_title: "Test Job",
-//     availability: "Available",
-//     application_status: "Applied",
-//     type: "Full Time",
-//   },
-//   {
-//     job_id: "12345",
-//     company_id: "1234",
-//     company_name: "Company name??",
-//     user_id: "1234",
-//     job_title: "Test Job",
-//     availability: "Available",
-//     application_status: "Applied",
-//     type: "Full Time",
-//   },
-//   {
-//     job_id: "12345",
-//     company_id: "1234",
-//     company_name: "Company name??",
-//     user_id: "1234",
-//     job_title: "Test Job",
-//     availability: "Available",
-//     application_status: "Applied",
-//     type: "Full Time",
-//   },
-//   {
-//     job_id: "12345",
-//     company_id: "1234",
-//     company_name: "Company name??",
-//     user_id: "1234",
-//     job_title: "Test Job",
-//     availability: "Available",
-//     application_status: "Applied",
-//     type: "Full Time",
-//   },
-//   {
-//     job_id: "12345",
-//     company_id: "1234",
-//     company_name: "Company name??",
-//     user_id: "1234",
-//     job_title: "Test Job",
-//     availability: "Available",
-//     application_status: "Applied",
-//     type: "Full Time",
-//   },
-//   {
-//     job_id: "12345",
-//     company_id: "1234",
-//     company_name: "Company name??",
-//     user_id: "1234",
-//     job_title: "Test Job",
-//     availability: "Available",
-//     application_status: "Applied",
-//     type: "Full Time",
-//   },
-// ];
-
 const JobRow = ({
   job_title,
   company_name,
@@ -117,7 +54,12 @@ const JobsPage = withRouter(({ match, history, location }) => {
     <div className="w-full flex flex-col flex-grow overflow-hidden">
       {/* Top level information */}
       <div className="flex flex-row justify-between items-center w-full h-20 p-4 border-b border-gray-400">
-        <Button colorClass="bg-green-500">Add Job</Button>
+        <Button 
+          colorClass="bg-green-500"
+          onClick={() => 
+            history.push(`${Routes.JOB_CREATE_PAGE}`)
+          }
+        >Add Job</Button>
       </div>
 
       {/* Jobs list */}

@@ -29,7 +29,7 @@ module.exports = async (req, res) => {
     let result;
     switch (req.body.crud) {
       case "create":
-        await createJob(req);
+        result = await createJob(req);
         break;
       case "read":
         result = await readJob(req);
@@ -73,6 +73,7 @@ const createJob = async (req) => {
        INSERT INTO job (job_id, company_id, user_id, job_title, availability, application_status, type)
        VALUES (${new_job_id}, ${req.body.company_id}, ${user_id}, ${req.body.job_title}, ${req.body.availability}, ${req.body.application_status}, ${req.body.type});`
   );
+  return true;
 };
 
 const readJob = async (req) => {
