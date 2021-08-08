@@ -84,7 +84,7 @@ const readJob = async (req) => {
   user_id = user_id[0].user_id;
 
   // Read and return job
-  let results = await query(
+  let jobs = await query(
     SQL`SELECT * 
         FROM job 
         LEFT JOIN company
@@ -92,7 +92,32 @@ const readJob = async (req) => {
         WHERE job_id = ${req.body.job_id}
         AND job.user_id = ${user_id};`
   );
-  return results[0];
+  let job = jobs[0];
+
+  // Read skills associated with given job
+  let jobSkills = await query(
+    SQL`SELECT * 
+        FROM job_skill
+          LEFT JOIN skill ON skill.skill_id = job_skill.skill_id
+        WHERE job_skill.job_id = ${req.body.job_id};`
+  );
+
+  let companyId = job.company_id;
+
+  let jobContacts = await query(
+    SQL`SELECT * FROM contact WHERE company_id = ${companyId};`
+  );
+
+  let otherJobsAtCompany = await query(
+    SQL`SELECT * FROM job WHERE company_id = ${companyId};`
+  );
+
+  return {
+    job,
+    skills: jobSkills,
+    contacts: jobContacts,
+    otherJobs: otherJobsAtCompany,
+  };
 };
 
 const readAllJobs = async (req) => {
