@@ -94,7 +94,29 @@ const readCompany = async (req) => {
         FROM company 
         WHERE company.company_id = ${req.body.company_id};`
   );
-  return results[0];
+  let company = results[0];
+
+  // Get all jobs at company
+  let companyJobs = await query(
+    SQL`SELECT *
+        FROM company
+        LEFT JOIN job on job.company_id = company.company_id
+        WHERE company.company_id = ${req.body.company_id};`
+  );
+
+  // Get all contacts at company
+  let companyContacts = await query(
+    SQL`SELECT *
+        FROM company
+        LEFT JOIN contact on contact.company_id = company.company_id
+        WHERE company.company_id = ${req.body.company_id};`
+  );
+
+  return {
+    company,
+    jobs: companyJobs,
+    contacts: companyContacts,
+  };
 };
 
 const readAllCompanies = async (req) => {
