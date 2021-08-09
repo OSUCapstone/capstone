@@ -1,41 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useParams, withRouter } from "react-router-dom";
 
-import { Button, Heading } from "../components";
-import { proficiencies } from "../constants";
+import {
+  Button,
+  Heading,
+  InfoSection,
+  ListItem,
+  Modal,
+  PageSection,
+} from "../components";
 import { requestPost } from "../requests";
 import Routes from "../Routes";
-
-// Ideas
-// List skills at this job
-//
-
-const InfoSection = ({ title, info, textClass = "3xl" }) => (
-  <>
-    <div className="text-gray-500 text-sm font-medium">{title}</div>
-    <div className={`text-gray-800 text-${textClass} font-bold mb-2`}>
-      {info}
-    </div>
-  </>
-);
-
-const ListItem = ({ title, onClick }) => (
-  <p
-    className="font-medium text-gray-500 hover:text-gray-800 cursor-pointer"
-    onClick={onClick}
-  >
-    {title}
-  </p>
-);
-
-const PageSection = ({ title, children }) => (
-  <div className="mb-3">
-    <p className="text-gray-500 text-xs font-medium italic mb-2">{title}</p>
-    <div className="w-full rounded-md border border-gray-300 p-3">
-      {children}
-    </div>
-  </div>
-);
 
 const JobPage = withRouter(({ match, history, location }) => {
   const [loading, setLoading] = useState(true);
@@ -43,6 +18,7 @@ const JobPage = withRouter(({ match, history, location }) => {
   const [skills, setSkills] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [otherJobsAtCompany, setOtherJobsAtCompany] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const { id } = useParams();
 
@@ -61,6 +37,11 @@ const JobPage = withRouter(({ match, history, location }) => {
     };
     init();
   }, [id]);
+
+  const onClickDeleteJob = async () => {
+    await requestPost("/api/crudJob", { crud: "delete", job_id: id });
+    history.push(Routes.JOBS_PAGE);
+  };
 
   if (loading) {
     return (
@@ -90,7 +71,12 @@ const JobPage = withRouter(({ match, history, location }) => {
       </PageSection>
 
       <div className="flex flex-row self-end">
-        <Button colorClass="h-8 bg-red-500">Delete Job</Button>
+        <Button
+          colorClass="h-8 bg-red-500"
+          onClick={() => setModalVisible(true)}
+        >
+          Delete Job
+        </Button>
       </div>
 
       {/* Skills Section */}
@@ -145,6 +131,21 @@ const JobPage = withRouter(({ match, history, location }) => {
           <p>You don't have any jobs listed at this company</p>
         )}
       </PageSection>
+
+      {/* Confirm Deletion */}
+      {modalVisible && (
+        <Modal setOpen={setModalVisible}>
+          <p className="text-black font-medium text-center mb-5">
+            Are you sure you want to delete this job?
+          </p>
+          <div className="flex flex-row">
+            <Button colorClass="bg-red-500 mr-2" onClick={onClickDeleteJob}>
+              Delete
+            </Button>
+            <Button onClick={() => setModalVisible(false)}>Nevermind</Button>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 });
