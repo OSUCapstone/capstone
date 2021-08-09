@@ -27,8 +27,6 @@ const SkillPage = withRouter(({ match, history, location }) => {
       setLoading(true);
       let res = await requestPost("/api/crudSkill", { crud: "read", skill_id: id });
       if (res) {
-        console.log(res);
-        console.log(res.jobs);
         setSkill(res.skill);
         setJobs(res.jobs);
         setLoading(false);
