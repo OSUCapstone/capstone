@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { withRouter } from "react-router-dom";
 
-import { Button } from "../components";
+import { Button, ListPlaceholder } from "../components";
 import { requestPost } from "../requests";
 import Routes from "../Routes";
 
@@ -15,20 +15,28 @@ const CompanyRow = ({ company_name, jobs, contacts, onClick }) => (
     </div>
     <div className="flex h-full flex-col justify-center items-end">
       <p>
-        You have <strong>{jobs.length}</strong> jobs saved from this company
+        You have <strong>{jobs.length}</strong> job{jobs.length !== 1 && "s"}{" "}
+        saved from this company
       </p>
       <p>
-        You have <strong>{contacts.length}</strong> contacts at this company
+        You have <strong>{contacts.length}</strong> contact
+        {contacts.length !== 1 && "s"} at this company
       </p>
     </div>
   </div>
 );
 
-const ListPlaceholder = ({ children }) => (
-  <div className="w-full flex-grow flex justify-center items-center text-gray-500 italic text-lg">
-    {children}
-  </div>
-);
+const companySort = (a, b) => {
+  let aLen = a.jobs.length + a.contacts.length;
+  let bLen = b.jobs.length + b.contacts.length;
+  if (aLen < bLen) {
+    return 1;
+  } else if (aLen > bLen) {
+    return -1;
+  } else {
+    return 0;
+  }
+};
 
 const CompaniesPage = withRouter(({ match, history, location }) => {
   const [companies, setCompanies] = useState([]);
@@ -65,17 +73,7 @@ const CompaniesPage = withRouter(({ match, history, location }) => {
           {companies &&
             companies.length > 0 &&
             companies
-              .sort((a, b) => {
-                let aLen = a.jobs.length + a.contacts.length;
-                let bLen = b.jobs.length + b.contacts.length;
-                if (aLen < bLen) {
-                  return 1;
-                } else if (aLen > bLen) {
-                  return -1;
-                } else {
-                  return 0;
-                }
-              })
+              .sort(companySort)
               .map((company) => (
                 <CompanyRow
                   {...company}

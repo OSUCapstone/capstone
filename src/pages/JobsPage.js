@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { withRouter } from "react-router-dom";
 
-import { Button } from "../components";
+import { Button, ListPlaceholder } from "../components";
 import requestPost from "../requests/requestPost";
 import Routes from "../Routes";
 
@@ -26,12 +26,6 @@ const JobRow = ({
       <p>{availability}</p>
       <p>{application_status}</p>
     </div>
-  </div>
-);
-
-const ListPlaceholder = ({ children }) => (
-  <div className="w-full flex-grow flex justify-center items-center text-gray-500 italic text-lg">
-    {children}
   </div>
 );
 
