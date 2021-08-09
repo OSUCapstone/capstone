@@ -66,7 +66,7 @@ const createJobSkill = async (req) => {
     SQL`SELECT user_id FROM token WHERE token = '${req.headers.authorization}';`
   );
   user_id = user_id[0].user_id;
-    
+
   // Check to see if job-skill exists
   let jobSkill = await query(
     SQL`SELECT * 
@@ -84,7 +84,7 @@ const createJobSkill = async (req) => {
   } else {
     return false;
   }
-}; 
+};
 
 const readJobSkill = async (req) => {
   // Read and return job-skill
@@ -106,7 +106,7 @@ const readAllJobSkills = async (req) => {
     SQL`SELECT * FROM job_skill 
         WWHERE skill_id = ${req.body.skill_id} AND job_id = ${req.body.job_id};`
   );
-}
+};
 
 const updateJobSkill = async (req) => {
   await query(
@@ -124,4 +124,3 @@ const deleteJobSkill = async (req) => {
     WHERE skill_id = ${req.body.skill_id} AND job_id = ${req.body.job_id};`
   );
 };
-
