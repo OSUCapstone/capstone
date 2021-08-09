@@ -22,7 +22,7 @@ const JobRow = ({
       <p className="text-sm font-regular my-1">{company_name}</p>
       <p className="text-sm font-regular my-1">{type}</p>
     </div>
-    <div className="flex h-full flex-col justify-center items-center">
+    <div className="flex h-full flex-col justify-center items-end">
       <p>{availability}</p>
       <p>{application_status}</p>
     </div>
@@ -54,12 +54,12 @@ const JobsPage = withRouter(({ match, history, location }) => {
     <div className="w-full flex flex-col flex-grow overflow-hidden">
       {/* Top level information */}
       <div className="flex flex-row justify-between items-center w-full h-20 p-4 border-b border-gray-400">
-        <Button 
+        <Button
           colorClass="bg-green-500"
-          onClick={() => 
-            history.push(`${Routes.JOB_CREATE_PAGE}`)
-          }
-        >Add Job</Button>
+          onClick={() => history.push(`${Routes.JOB_CREATE_PAGE}`)}
+        >
+          Add Job
+        </Button>
       </div>
 
       {/* Jobs list */}

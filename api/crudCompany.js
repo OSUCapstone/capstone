@@ -104,10 +104,61 @@ const readAllCompanies = async (req) => {
   );
   user_id = user_id[0].user_id;
 
-  // Read and return companies
-  return await query(
+  // Read companies
+  let companies = await query(
     SQL`SELECT * FROM company WHERE user_id = ${user_id};`
   );
+
+  // Read jobs
+  let jobs = await query(SQL`SELECT * FROM job WHERE user_id = ${user_id};`);
+
+  // Read contacts
+  let contacts = await query(
+    SQL`SELECT * FROM contact WHERE user_id = ${user_id};`
+  );
+
+  // Convert jobs list to object
+  let jobsObject = {};
+  jobs.forEach((job) => {
+    let val = JSON.parse(JSON.stringify(job));
+    if (job.company_id in jobsObject) {
+      jobsObject[job.company_id].push(val);
+    } else {
+      jobsObject[job.company_id] = [val];
+    }
+  });
+
+  // Convert contacts list to object
+  let contactsObject = {};
+  contacts.forEach((contact) => {
+    let val = JSON.parse(JSON.stringify(contact));
+    if (contact.company_id in contactsObject) {
+      contactsObject[contact.company_id].push(val);
+    } else {
+      contactsObject[contact.company_id] = [val];
+    }
+  });
+
+  // Add jobs and contacts to companies list
+  companies = companies.map((company) => {
+    let comp = {
+      ...company,
+      jobs: [],
+      contacts: [],
+    };
+
+    if (company.company_id in jobsObject) {
+      comp.jobs = jobsObject[company.company_id];
+    }
+
+    if (company.company_id in contactsObject) {
+      comp.contacts = contactsObject[company.company_id];
+    }
+
+    return comp;
+  });
+
+  return companies;
 };
 
 const updateCompany = async (req) => {
@@ -120,5 +171,7 @@ const updateCompany = async (req) => {
 };
 
 const deleteCompany = async (req) => {
-  await query(SQL`DELETE FROM company WHERE company_id = ${req.body.company_id};`);
+  await query(
+    SQL`DELETE FROM company WHERE company_id = ${req.body.company_id};`
+  );
 };
