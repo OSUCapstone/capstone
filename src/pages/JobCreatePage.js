@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { withRouter } from "react-router-dom";
 
-import { Heading, TextInput, Button } from "../components";
+import { Heading, TextInput, Button, GeneralDropdown } from "../components";
 import { requestPost } from "../requests";
 import Routes from "../Routes";
 
@@ -11,25 +11,35 @@ const JobCreatePage = withRouter(({ match, history, location }) => {
   const [availability, setAvailability] = useState("");
   const [status, setStatus] = useState("");
   const [type, setType] = useState("");
+  const [companies, setCompanies] = useState([]);
+
+  useEffect(() => {
+    const init = async () => {
+      let res = await requestPost("/api/crudCompany", { crud: "readAll" });
+      if (res) {
+        setCompanies(res);
+      } else {
+        setCompanies([]);
+      }
+    };
+    init();
+  }, []);
 
   const handleCreateJob = async () => {
     try {
-      let success =  await requestPost(
-        '/api/crudJob',
-        {
-          crud: 'create',
-          job_title: `${job}`,
-          company_id: `${company}`,
-          availability: `${availability}`,
-          application_status: `${status}`,
-          type: `${type}`,
-        }
-      );
+      let success = await requestPost("/api/crudJob", {
+        crud: "create",
+        job_title: `${job}`,
+        company_id: `${company.company_id}`,
+        availability: `${availability}`,
+        application_status: `${status}`,
+        type: `${type}`,
+      });
 
       if (success) {
         history.push(Routes.JOBS_PAGE);
       } else {
-        console.log('Failed to create job!');
+        console.log("Failed to create job!");
       }
     } catch (err) {
       console.log(err);
@@ -38,32 +48,34 @@ const JobCreatePage = withRouter(({ match, history, location }) => {
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-center">
-      <Heading>Jobs</Heading>
-      <div className="my-2">
+      <Heading>Create Job</Heading>
+      <div
+        className="flex flex-col justify-between my-2"
+        style={{ height: "250px" }}
+      >
+        <TextInput value={job} setValue={setJob} placeholder="Job title" />
+        <GeneralDropdown
+          options={companies}
+          selected={company}
+          onSelect={setCompany}
+          displayAttribute="company_name"
+          placeholder="Company"
+        />
         <TextInput
-          value={job}
-          setValue={setJob}
-          placeholder="Enter job title..."
-        />
-        <TextInput 
-          value={company}
-          setValue={setCompany}
-          placeholder="Enter company..."
-        />
-        <TextInput 
           value={availability}
           setValue={setAvailability}
-          placeholder="Enter availability..."
+          placeholder="Availability (ex: 'Until March')"
         />
-        <TextInput 
+        <TextInput
           value={status}
           setValue={setStatus}
-          placeholder="Enter status..."
+          placeholder="Application status (ex: 'Scheduled Interview')"
         />
-        <TextInput 
-          value={type}
-          setValue={setType}
-          placeholder="Enter type..."
+        <GeneralDropdown
+          options={["Full Time", "Part Time", "Contract", "Internship"]}
+          selected={type}
+          onSelect={setType}
+          placeholder="Job type"
         />
       </div>
       <div className="my-2">

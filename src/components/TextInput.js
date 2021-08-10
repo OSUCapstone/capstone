@@ -5,7 +5,7 @@ const TextInput = ({
   type = "text",
   onKeyDown,
 }) => (
-  <div className="border shadow rounded h-10 flex flex-row flex-shrink justify-center items-center w-56">
+  <div className="border shadow rounded h-10 flex flex-row flex-shrink justify-center items-center w-96">
     <input
       value={value}
       onChange={(e) => setValue(e.target.value)}
