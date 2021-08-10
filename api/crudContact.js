@@ -111,7 +111,20 @@ const readContact = async (req) => {
         ON contact.company_id=company.company_id
         WHERE contact_id = ${req.body.contact_id};`
   );
-  return results[0];
+  let contact = results[0];
+
+  let contactJobs = await query(
+    SQL`SELECT *
+        FROM contact
+        LEFT JOIN company ON contact.company_id = company.company_id
+        LEFT JOIN job ON job.company_id = company.company_id
+        WHERE contact_id = ${req.body.contact_id};`
+  );
+
+  return {
+    contact,
+    jobs: contactJobs,
+  };
 }
 
 const readAllContacts = async (req) => {

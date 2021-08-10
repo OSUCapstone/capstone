@@ -89,7 +89,21 @@ const readSkill = async (req) => {
   let results = await query(
     SQL`SELECT * FROM skill WHERE skill_id = ${req.body.skill_id};`
   );
-  return results[0];
+  let skill = results[0];
+
+  // Read and return all jobs requiring this skill
+  let skillJobs = await query(
+    SQL`SELECT * 
+        FROM job_skill
+          LEFT JOIN job ON job.job_id = job_skill.job_id
+          LEFT JOIN company ON company.company_id = job.company_id
+        WHERE job_skill.skill_id = ${req.body.skill_id};`
+  );
+
+  return {
+    skill,
+    "jobs": skillJobs,
+  };
 };
 
 const readAllSkills = async (req) => {
