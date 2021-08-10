@@ -3,11 +3,13 @@ import { useParams, withRouter } from "react-router-dom";
 
 import {
   Button,
+  GeneralDropdown,
   Heading,
   InfoSection,
   ListItem,
   Modal,
   PageSection,
+  TextInput,
 } from "../components";
 import { requestPost } from "../requests";
 import Routes from "../Routes";
@@ -19,6 +21,9 @@ const JobPage = withRouter(({ match, history, location }) => {
   const [contacts, setContacts] = useState([]);
   const [otherJobsAtCompany, setOtherJobsAtCompany] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [status, setStatus] = useState("");
+  const [editStatusValue, setEditStatusValue] = useState("");
 
   const { id } = useParams();
 
@@ -31,6 +36,7 @@ const JobPage = withRouter(({ match, history, location }) => {
         setJob(res.job);
         setSkills(res.skills);
         setContacts(res.contacts);
+        setStatus(res.job.application_status);
         setOtherJobsAtCompany(res.otherJobs.filter((job) => job.job_id !== id));
         setLoading(false);
       }
@@ -38,9 +44,27 @@ const JobPage = withRouter(({ match, history, location }) => {
     init();
   }, [id]);
 
+  useEffect(() => {
+    setEditStatusValue(job?.application_status);
+  }, [job]);
+
   const onClickDeleteJob = async () => {
     await requestPost("/api/crudJob", { crud: "delete", job_id: id });
     history.push(Routes.JOBS_PAGE);
+  };
+
+  const onClickSaveStatus = async () => {
+    await requestPost("/api/crudJob", {
+      crud: "update",
+      company_id: job.company_id,
+      job_title: job.job_title,
+      availability: job.availability,
+      application_status: editStatusValue,
+      type: job.type,
+      job_id: id,
+    });
+    setStatus(editStatusValue);
+    setEditModalVisible(false);
   };
 
   if (loading) {
@@ -63,14 +87,16 @@ const JobPage = withRouter(({ match, history, location }) => {
           info={job.availability}
           textClass="xl"
         />
-        <InfoSection
-          title="Your Progress"
-          info={job.application_status}
-          textClass="xl"
-        />
+        <InfoSection title="Your Progress" info={status} textClass="xl" />
       </PageSection>
 
       <div className="flex flex-row self-end">
+        <Button
+          colorClass="h-8 bg-blue-400 mr-2"
+          onClick={() => setEditModalVisible(true)}
+        >
+          Edit Application Status
+        </Button>
         <Button
           colorClass="h-8 bg-red-500"
           onClick={() => setModalVisible(true)}
@@ -144,6 +170,23 @@ const JobPage = withRouter(({ match, history, location }) => {
             </Button>
             <Button onClick={() => setModalVisible(false)}>Nevermind</Button>
           </div>
+        </Modal>
+      )}
+
+      {/* Edit Proficiency*/}
+      {editModalVisible && (
+        <Modal setOpen={setEditModalVisible}>
+          <p className="text-black font-medium text-center my-5">
+            Edit your application status
+          </p>
+          <TextInput
+            value={editStatusValue}
+            setValue={setEditStatusValue}
+            placeholder="New Application Status"
+          />
+          <Button onClick={onClickSaveStatus} colorClass="bg-green-400 my-5">
+            Save
+          </Button>
         </Modal>
       )}
     </div>
