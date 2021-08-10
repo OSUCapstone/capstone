@@ -5,27 +5,29 @@ import { Button, ListPlaceholder } from "../components";
 import { requestPost } from "../requests";
 import Routes from "../Routes";
 
-const ContactRow = ({ contact_name, onClick }) => (
+const ContactRow = ({ contact_name, company_name, onClick }) => (
   <div
     className="flex flex-row justify-between w-full h-32 py-4 px-6 border-b border-gray-400 hover:bg-gray-100 cursor-pointer"
     onClick={onClick}
   >
     <div className="flex flex-col justify-center items-start flex-grow">
       <p className="text-lg font-medium">{contact_name}</p>
+      <p className="text-sm font-medium">
+        Works at <strong>{company_name}</strong>
+      </p>
     </div>
   </div>
 );
 
 const ContactsPage = withRouter(({ match, history, location }) => {
-  const [contacts, setContacts] = useState(null);
+  const [contacts, setContacts] = useState([]);
 
   useEffect(() => {
     const init = async () => {
       let res = await requestPost("/api/crudContact", { crud: "readAll" });
       if (res) {
+        console.log(res);
         setContacts(res);
-      } else {
-        setContacts([]);
       }
     };
     init();
@@ -52,8 +54,9 @@ const ContactsPage = withRouter(({ match, history, location }) => {
           )}
           {contacts &&
             contacts.length > 0 &&
-            contacts.map((contact) => (
+            contacts.map((contact, index) => (
               <ContactRow
+                key={index}
                 {...contact}
                 onClick={() =>
                   history.push(

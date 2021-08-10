@@ -28,19 +28,19 @@ module.exports = async (req, res) => {
   try {
     let result;
     switch (req.body.crud) {
-      case ("create"):
+      case "create":
         result = await createContact(req);
         break;
-      case ("read"):
+      case "read":
         result = await readContact(req);
         break;
-      case ("readAll"):
+      case "readAll":
         result = await readAllContacts(req);
         break;
-      case ("update"):
+      case "update":
         await updateContact(req);
         break;
-      case ("delete"):
+      case "delete":
         await deleteContact(req);
         break;
       default:
@@ -100,7 +100,7 @@ const createContact = async (req) => {
   } else {
     return false;
   }
-}
+};
 
 const readContact = async (req) => {
   // Read and return contact
@@ -125,7 +125,7 @@ const readContact = async (req) => {
     contact,
     jobs: contactJobs,
   };
-}
+};
 
 const readAllContacts = async (req) => {
   // Get user ID from token
@@ -134,9 +134,9 @@ const readAllContacts = async (req) => {
   );
   user_id = user_id[0].user_id;
 
-  // Read and return contacts
+  // Read contacts
   return await query(
-    SQL`SELECT * FROM contact WHERE user_id = ${user_id};`
+    SQL`SELECT * FROM contact LEFT JOIN company ON company.company_id = contact.company_id WHERE contact.user_id = ${user_id};`
   );
 };
 
@@ -153,5 +153,7 @@ const updateContact = async (req) => {
 };
 
 const deleteContact = async (req) => {
-  await query(SQL`DELETE FROM contact WHERE contact_id = ${req.body.contact_id};`);
+  await query(
+    SQL`DELETE FROM contact WHERE contact_id = ${req.body.contact_id};`
+  );
 };
