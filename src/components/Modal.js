@@ -17,7 +17,7 @@ const Modal = ({ children, setOpen }) => {
         transform: "translate(-50%, -50%)",
       }}
     >
-      <div className="flex flex-col justify-center items-center w-68 h-40 bg-white border border-gray-100 rounded-md shadow-md p-5">
+      <div className="flex flex-col justify-center items-center w-68 bg-white border border-gray-100 rounded-md shadow-md p-5">
         {children}
       </div>
     </div>

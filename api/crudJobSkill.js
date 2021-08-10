@@ -1,6 +1,7 @@
 const SQL = require("sql-template-strings");
 const mysql = require("serverless-mysql");
 const { v4: uuidv4 } = require("uuid");
+const { isCompositeComponent } = require("react-dom/test-utils");
 
 // Initialize the database.
 const db = mysql({
@@ -63,7 +64,7 @@ const createJobSkill = async (req) => {
 
   // Get user's id
   let user_id = await query(
-    SQL`SELECT user_id FROM token WHERE token = '${req.headers.authorization}';`
+    SQL`SELECT user_id FROM token WHERE token = ${req.headers.authorization};`
   );
   user_id = user_id[0].user_id;
 
@@ -75,7 +76,7 @@ const createJobSkill = async (req) => {
   );
 
   // If job-skill does not exist, create it
-  if (!jobSkill.length == 0) {
+  if (jobSkill.length === 0) {
     await query(
       SQL`INSERT INTO job_skill (job_skill_id, skill_id, job_id) 
           VALUES (${new_job_skill_id}, ${req.body.skill_id}, ${req.body.job_id});`

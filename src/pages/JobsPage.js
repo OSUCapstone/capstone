@@ -47,7 +47,7 @@ const JobsPage = withRouter(({ match, history, location }) => {
   return (
     <div className="w-full flex flex-col flex-grow overflow-hidden">
       {/* Top level information */}
-      <div className="flex flex-row justify-between items-center w-full h-20 p-4 border-b border-gray-400">
+      <div className="flex flex-row justify-between items-center w-full h-20 p-4 border-b border-gray-400 flex-none">
         <Button
           colorClass="bg-green-500"
           onClick={() => history.push(`${Routes.JOB_CREATE_PAGE}`)}
