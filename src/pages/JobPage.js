@@ -3,6 +3,7 @@ import { useParams, withRouter } from "react-router-dom";
 
 import {
   Button,
+  Footnote,
   GeneralDropdown,
   Heading,
   InfoSection,
@@ -24,6 +25,10 @@ const JobPage = withRouter(({ match, history, location }) => {
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [status, setStatus] = useState("");
   const [editStatusValue, setEditStatusValue] = useState("");
+  const [addSkillModalVisible, setAddSkillModalVisible] = useState(false);
+  const [possibleSkills, setPossibleSkills] = useState([]);
+  const [selectedNewSkill, setSelectedNewSkill] = useState(null);
+  const [trigger, setTrigger] = useState(null);
 
   const { id } = useParams();
 
@@ -40,9 +45,18 @@ const JobPage = withRouter(({ match, history, location }) => {
         setOtherJobsAtCompany(res.otherJobs.filter((job) => job.job_id !== id));
         setLoading(false);
       }
+      let skillsRes = await requestPost("/api/crudSkill", { crud: "readAll" });
+      if (skillsRes) {
+        let alreadyExistingSkillIds = res.skills.map((skill) => skill.skill_id);
+        setPossibleSkills(
+          skillsRes.filter(
+            (skill) => !alreadyExistingSkillIds.includes(skill.skill_id)
+          )
+        );
+      }
     };
     init();
-  }, [id]);
+  }, [id, trigger]);
 
   useEffect(() => {
     setEditStatusValue(job?.application_status);
@@ -65,6 +79,16 @@ const JobPage = withRouter(({ match, history, location }) => {
     });
     setStatus(editStatusValue);
     setEditModalVisible(false);
+  };
+
+  const onClickSaveNewSkill = async () => {
+    await requestPost("/api/crudJobSkill", {
+      crud: "create",
+      skill_id: selectedNewSkill.skill_id,
+      job_id: id,
+    });
+    setTrigger((trig) => !trig);
+    setAddSkillModalVisible(false);
   };
 
   if (loading) {
@@ -121,7 +145,12 @@ const JobPage = withRouter(({ match, history, location }) => {
         )}
       </PageSection>
       <div className="flex flex-row self-end">
-        <Button colorClass="h-8 bg-blue-400 mr-2">Add Skill</Button>
+        <Button
+          colorClass="h-8 bg-blue-400 mr-2"
+          onClick={() => setAddSkillModalVisible(true)}
+        >
+          Add Skill
+        </Button>
       </div>
 
       {/* Contacts Section */}
@@ -187,6 +216,30 @@ const JobPage = withRouter(({ match, history, location }) => {
           <Button onClick={onClickSaveStatus} colorClass="bg-green-400 my-5">
             Save
           </Button>
+        </Modal>
+      )}
+
+      {/* Add Skill*/}
+      {addSkillModalVisible && (
+        <Modal setOpen={setAddSkillModalVisible}>
+          <p className="text-black font-medium text-center my-5">
+            Add a skill to this job
+          </p>
+          <GeneralDropdown
+            options={possibleSkills}
+            selected={selectedNewSkill}
+            onSelect={setSelectedNewSkill}
+            placeholder="Add a skill!"
+            displayAttribute="skill_name"
+          />
+          <Button onClick={onClickSaveNewSkill} colorClass="bg-green-400 my-5">
+            Save
+          </Button>
+          <Footnote
+            unlinkedText="If you want to add a new skill"
+            linkedText="click here"
+            onClickLink={() => history.push(Routes.SKILL_CREATE_PAGE)}
+          />
         </Modal>
       )}
     </div>
