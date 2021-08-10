@@ -10,3 +10,4 @@ export { default as InfoSection } from "./InfoSection";
 export { default as ListItem } from "./ListItem";
 export { default as Modal } from "./Modal";
 export { default as PageSection } from "./PageSection";
+export { default as ListPlaceholder } from "./ListPlaceholder";

@@ -1,6 +1,5 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
-import { CgProfile } from "react-icons/cg";
 
 import Routes from "../Routes";
 import ProfileDropdown from "./ProfileDropdown";

@@ -28,19 +28,19 @@ module.exports = async (req, res) => {
   try {
     let result;
     switch (req.body.crud) {
-      case ("create"):
+      case "create":
         result = await createSkill(req);
         break;
-      case ("read"):
+      case "read":
         result = await readSkill(req);
         break;
-      case ("readAll"):
+      case "readAll":
         result = await readAllSkills(req);
         break;
-      case ("update"):
+      case "update":
         await updateSkill(req);
         break;
-      case ("delete"):
+      case "delete":
         await deleteSkill(req);
         break;
       default:
@@ -113,11 +113,41 @@ const readAllSkills = async (req) => {
   );
   user_id = user_id[0].user_id;
 
-  // Read and return skills
-  return await query(
+  // Read skills
+  let skills = await query(
     SQL`SELECT * FROM skill WHERE user_id = ${user_id};`
   );
-}
+
+  // Read job_skills
+  let jobSkills = await query(SQL`SELECT * FROM job_skill;`);
+
+  // Convert job_skills list to object
+  let jobSkillsObject = {};
+  jobSkills.forEach((jobSkill) => {
+    let val = JSON.parse(JSON.stringify(jobSkill));
+    if (jobSkill.skill_id in jobSkillsObject) {
+      jobSkillsObject[jobSkill.skill_id].push(val);
+    } else {
+      jobSkillsObject[jobSkill.skill_id] = [val];
+    }
+  });
+
+  // Add job skills to skills list
+  skills = skills.map((skill) => {
+    let skillObject = {
+      ...skill,
+      jobs: [],
+    };
+
+    if (skill.skill_id in jobSkillsObject) {
+      skillObject.jobs = jobSkillsObject[skill.skill_id];
+    }
+
+    return skillObject;
+  });
+
+  return skills;
+};
 
 const updateSkill = async (req) => {
   await query(
