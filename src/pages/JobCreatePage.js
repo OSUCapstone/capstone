@@ -18,8 +18,6 @@ const JobCreatePage = withRouter(({ match, history, location }) => {
       let res = await requestPost("/api/crudCompany", { crud: "readAll" });
       if (res) {
         setCompanies(res);
-      } else {
-        setCompanies([]);
       }
     };
     init();
