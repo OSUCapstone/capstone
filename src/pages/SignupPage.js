@@ -15,14 +15,24 @@ const SignupPage = withRouter(({ match, history, location }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSignUp = async () => {
-    if (username && password && password === confirmPassword) {
+    if (!(username && password && confirmPassword)) {
+      setErrorMessage("Please fill out all fields to signup");
+      return;
+    } else if (password !== confirmPassword) {
+      setErrorMessage("Please make sure your passwords match");
+      return;
+    } else {
       try {
         await createAccount(username, password);
         await handleLogin();
       } catch (err) {
         console.log(err);
+        setErrorMessage(
+          "An error occurred during sigup. Please make sure you've entered valid values in all fields"
+        );
       }
     }
   };
@@ -34,6 +44,9 @@ const SignupPage = withRouter(({ match, history, location }) => {
       history.push(Routes.JOBS_PAGE);
     } catch (err) {
       console.log(err);
+      setErrorMessage(
+        "An error occurred during login. Please make sure you've entered valid account credentials"
+      );
     }
   };
 
@@ -44,7 +57,7 @@ const SignupPage = withRouter(({ match, history, location }) => {
       </div>
       <Heading>Sign Up</Heading>
       <SubHeading>
-        ...and get started on your journey towards employement 😁
+        ...and get started on your journey towards employment 😁
       </SubHeading>
       <div className="my-2">
         <TextInput
@@ -77,6 +90,11 @@ const SignupPage = withRouter(({ match, history, location }) => {
         linkedText="Log in here!"
         onClickLink={() => history.push(Routes.LOGIN_PAGE)}
       />
+      {errorMessage && (
+        <p className="text-xs text-red-500 mt-2 w-80 text-center">
+          {errorMessage}
+        </p>
+      )}
     </div>
   );
 });

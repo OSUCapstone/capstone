@@ -8,9 +8,17 @@ import Routes from "../Routes";
 
 const SkillCreatePage = withRouter(({ match, history, location }) => {
   const [skill, setSkill] = useState("");
-  const [proficiency, setProficiency] = useState("");
+  const [proficiency, setProficiency] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleCreateSkill = async () => {
+    setErrorMessage("");
+    if (!(skill && proficiency !== null)) {
+      setErrorMessage(
+        "You must fill out all fields before submitting the form"
+      );
+      return;
+    }
     try {
       let success = await requestPost("/api/crudSkill", {
         crud: "create",
@@ -22,9 +30,15 @@ const SkillCreatePage = withRouter(({ match, history, location }) => {
         history.push(Routes.SKILLS_PAGE);
       } else {
         console.log("Failed to create skill!");
+        setErrorMessage(
+          "An error occurred during skill creation. Please make sure all fields are filled out correctly before submitting."
+        );
       }
     } catch (err) {
       console.log(err);
+      setErrorMessage(
+        "An error occurred during skill creation. Please make sure all fields are filled out correctly before submitting."
+      );
     }
   };
 
@@ -52,6 +66,11 @@ const SkillCreatePage = withRouter(({ match, history, location }) => {
       <div className="my-2">
         <Button onClick={handleCreateSkill}>Add Skill</Button>
       </div>
+      {errorMessage && (
+        <p className="text-xs text-red-500 mt-2 w-80 text-center">
+          {errorMessage}
+        </p>
+      )}
     </div>
   );
 });

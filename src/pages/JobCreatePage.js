@@ -12,6 +12,7 @@ const JobCreatePage = withRouter(({ match, history, location }) => {
   const [status, setStatus] = useState("");
   const [type, setType] = useState("");
   const [companies, setCompanies] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const init = async () => {
@@ -24,6 +25,13 @@ const JobCreatePage = withRouter(({ match, history, location }) => {
   }, []);
 
   const handleCreateJob = async () => {
+    setErrorMessage("");
+    if (!(job && company && availability && status && type)) {
+      setErrorMessage(
+        "You must fill out all fields before submitting the form"
+      );
+      return;
+    }
     try {
       let success = await requestPost("/api/crudJob", {
         crud: "create",
@@ -38,9 +46,15 @@ const JobCreatePage = withRouter(({ match, history, location }) => {
         history.push(Routes.JOBS_PAGE);
       } else {
         console.log("Failed to create job!");
+        setErrorMessage(
+          "An error occurred during job creation. Please make sure all fields are filled out correctly before submitting."
+        );
       }
     } catch (err) {
       console.log(err);
+      setErrorMessage(
+        "An error occurred during job creation. Please make sure all fields are filled out correctly before submitting."
+      );
     }
   };
 
@@ -79,6 +93,11 @@ const JobCreatePage = withRouter(({ match, history, location }) => {
       <div className="my-2">
         <Button onClick={handleCreateJob}>Add Job</Button>
       </div>
+      {errorMessage && (
+        <p className="text-xs text-red-500 mt-2 w-80 text-center">
+          {errorMessage}
+        </p>
+      )}
     </div>
   );
 });

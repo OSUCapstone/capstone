@@ -14,14 +14,25 @@ import Routes from "../Routes";
 const LoginPage = withRouter(({ match, history, location }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleLogin = async () => {
+    setErrorMessage("");
+    if (!(username && password)) {
+      setErrorMessage(
+        "Please fill out both fields with valid credentials to login"
+      );
+      return;
+    }
     try {
       let res = await login(username, password);
       localStorage.setItem("access_token", res.data);
       history.push(Routes.JOBS_PAGE);
     } catch (err) {
       console.log(err);
+      setErrorMessage(
+        "An error occurred during login. Please make sure you've entered valid account credentials"
+      );
     }
   };
 
@@ -38,7 +49,7 @@ const LoginPage = withRouter(({ match, history, location }) => {
       </div>
       <Heading>Log In</Heading>
       <SubHeading>
-        ...and get back to work on your journey towards employement!
+        ...and get back to work on your journey towards employment!
       </SubHeading>
       <div className="my-2">
         <TextInput
@@ -64,6 +75,11 @@ const LoginPage = withRouter(({ match, history, location }) => {
         linkedText="Sign up here!"
         onClickLink={() => history.push(Routes.SIGNUP_PAGE)}
       />
+      {errorMessage && (
+        <p className="text-xs text-red-500 mt-2 w-80 text-center">
+          {errorMessage}
+        </p>
+      )}
     </div>
   );
 });

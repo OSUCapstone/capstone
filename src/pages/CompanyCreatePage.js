@@ -7,24 +7,35 @@ import Routes from "../Routes";
 
 const CompanyCreatePage = withRouter(({ match, history, location }) => {
   const [company, setCompany] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleCreateCompany = async () => {
-    try {
-      let success =  await requestPost(
-        '/api/crudCompany',
-        {
-          crud: 'create',
-          company_name: `${company}`,
-        }
+    setErrorMessage("");
+    if (!company) {
+      setErrorMessage(
+        "You must fill out all fields before submitting the form"
       );
+      return;
+    }
+    try {
+      let success = await requestPost("/api/crudCompany", {
+        crud: "create",
+        company_name: `${company}`,
+      });
 
       if (success) {
         history.push(Routes.COMPANIES_PAGE);
       } else {
-        console.log('Failed to create company!');
+        console.log("Failed to create company!");
+        setErrorMessage(
+          "An error occurred during company creation. Please make sure all fields are filled out correctly before submitting."
+        );
       }
     } catch (err) {
       console.log(err);
+      setErrorMessage(
+        "An error occurred during company creation. Please make sure all fields are filled out correctly before submitting."
+      );
     }
   };
 
@@ -41,6 +52,11 @@ const CompanyCreatePage = withRouter(({ match, history, location }) => {
       <div className="my-2">
         <Button onClick={handleCreateCompany}>Add Company</Button>
       </div>
+      {errorMessage && (
+        <p className="text-xs text-red-500 mt-2 w-80 text-center">
+          {errorMessage}
+        </p>
+      )}
     </div>
   );
 });

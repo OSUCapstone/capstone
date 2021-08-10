@@ -12,6 +12,7 @@ const ContactCreatePage = withRouter(({ match, history, location }) => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [companies, setCompanies] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const init = async () => {
@@ -24,6 +25,13 @@ const ContactCreatePage = withRouter(({ match, history, location }) => {
   }, []);
 
   const handleCreateContact = async () => {
+    setErrorMessage("");
+    if (!(contact && company && role && email && phone)) {
+      setErrorMessage(
+        "You must fill out all fields before submitting the form"
+      );
+      return;
+    }
     try {
       let success = await requestPost("/api/crudContact", {
         crud: "create",
@@ -38,9 +46,15 @@ const ContactCreatePage = withRouter(({ match, history, location }) => {
         history.push(Routes.CONTACTS_PAGE);
       } else {
         console.log("Failed to create contact!");
+        setErrorMessage(
+          "An error occurred during contact creation. Please make sure all fields are filled out correctly before submitting."
+        );
       }
     } catch (err) {
       console.log(err);
+      setErrorMessage(
+        "An error occurred during contact creation. Please make sure all fields are filled out correctly before submitting."
+      );
     }
   };
 
@@ -78,6 +92,11 @@ const ContactCreatePage = withRouter(({ match, history, location }) => {
       <div className="my-2">
         <Button onClick={handleCreateContact}>Add Contact</Button>
       </div>
+      {errorMessage && (
+        <p className="text-xs text-red-500 mt-2 w-80 text-center">
+          {errorMessage}
+        </p>
+      )}
     </div>
   );
 });
